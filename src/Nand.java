@@ -52,19 +52,24 @@ public class Nand {
 		sig.speichern(this);
 	}
 
-	public void berechne(int t, boolean wert) {
+	public void berechne() {
 		boolean ergebnis = true;
-		int index;
-		// int time=t;
-		// int time2;
-		for (index = 0; index < eingänge; index++) {
-			ergebnis = ergebnis & eingangssignale[index].getValue();
+		for (Signal s : eingangssignale) {
+			ergebnis = ergebnis & s.getValue();
+		}
+		ergebnis = !ergebnis;
+		if (ergebnis != ausgangssignal.getValue()) {
+			ausgangssignal.setValue(ergebnis);
+		}
+	}
+	
+	public void berechne(int t) {
+		boolean ergebnis = true;
+		for (Signal s : eingangssignale) {
+			ergebnis = ergebnis & s.getValue();
 		}
 		ergebnis = !ergebnis;
 		{
-			// ausgangssignal.setValue(ergebnis);
-			// time = eingangssignal.getTime();
-			// time2 = time + delay;
 			if (ergebnis != ausgangssignal.getValue()) { // nur ein event
 															// erzeugen, wenn
 															// sich der wert
