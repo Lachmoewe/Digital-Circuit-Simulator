@@ -1,10 +1,9 @@
-
-
+package Stufe2;
 public class Nand {
 
-	private int eingänge; // Anzhal der Eing�nge
+	private int eingänge; // Anzhal der Eingänge
 	private Signal[] eingangssignale; // Instanzen der Klasse Signale werden
-										// hier gespeichert.
+	// hier gespeichert.
 	private Signal ausgangssignal;
 	private int delay;
 
@@ -12,27 +11,27 @@ public class Nand {
 
 	public Nand(int eingänge, int delay) { // Konstruktor konstruiert ...
 		this.delay = delay;
-		this.eingänge = eingänge; // Datenfeld Eing�nge wird mit dem Wert der
-									// Lokalen Variable Eing�nge gef�llt.
-		eingangssignale = new Signal[eingänge]; // Ein Array mit der Gr��e
-												// *Eing�nge* wird hergestellt
-												// in dem die versch.
-												// Signalinstanzen gespeichert
-												// werden k�nnen.
+		this.eingänge = eingänge; // Datenfeld Eingänge wird mit dem Wert der
+		// Lokalen Variable Eingänge gefällt.
+		eingangssignale = new Signal[eingänge]; // Ein Array mit der Größe
+		// *Eingänge* wird hergestellt
+		// in dem die versch.
+		// Signalinstanzen gespeichert
+		// werden kännen.
 	}
 
 	public void setInput(int eingangsNummer, Signal sig) {
 		if ((eingangsNummer >= 0) && (eingangsNummer < eingänge)) // Nur
-																	// zul�ssige
-																	// Eingangsnummern
-																	// verwenden
+		// zulässige
+		// Eingangsnummern
+		// verwenden
 		{
 			this.verbinden(sig);// interner methodenaufruf
 			eingangssignale[eingangsNummer] = sig; // Speichert ein Signal *sig*
-													// an die Stelle X, welche
-													// durch *eingangsNummer* in
-													// einem Array, welches an
-													// der
+			// an die Stelle X, welche
+			// durch *eingangsNummer* in
+			// einem Array, welches an
+			// der
 		} else {
 			System.out.println("Falsche Eingangsnummer");
 
@@ -46,8 +45,8 @@ public class Nand {
 	}
 
 	public void verbinden(Signal sig)// die methode speichern aus der Klasse
-										// Signal aufrufen und dadurch das
-										// gatter in die ArrayList eintragen
+	// Signal aufrufen und dadurch das
+	// gatter in die ArrayList eintragen
 	{
 		sig.speichern(this);
 	}
@@ -62,7 +61,7 @@ public class Nand {
 			ausgangssignal.setValue(ergebnis);
 		}
 	}
-	
+
 	public void berechne(int t) {
 		boolean ergebnis = true;
 		for (Signal s : eingangssignale) {
@@ -71,9 +70,9 @@ public class Nand {
 		ergebnis = !ergebnis;
 		{
 			if (ergebnis != ausgangssignal.getValue()) { // nur ein event
-															// erzeugen, wenn
-															// sich der wert
-															// ge�ndert hat
+			// erzeugen, wenn
+			// sich der wert
+			// geändert hat
 				new Event(ausgangssignal, t += delay, ergebnis);
 			}
 		}
