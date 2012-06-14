@@ -1,3 +1,5 @@
+package Stufe2;
+
 /**
  * Klasse TimingSimulator ist ein Logiksimulator, der nur Nand-Gatter simulieren
  * kann und Zeitverzögerungen berücksichtigt. Die zu simulierende Schaltung wird
@@ -154,8 +156,10 @@ public class TimingSimulator {
 	public void simulate() {
 		while (queue.hasMore()) {
 			Event e = queue.getFirst();
-
-			// System.out.println(e);
+			
+			System.out.print("Wert von " + e.getName() + " ");
+			System.out.print("ist: " + e.getValue() + " ");
+			System.out.println("Zeit: " + e.getTime() + " ");
 			e.propagate();
 		}
 	}
