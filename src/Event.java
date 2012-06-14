@@ -1,31 +1,33 @@
 
+
 public class Event {
-	private static EventQueue masterqueue;
-	
-	private Signal 	sig;
-	private int 	time;
+
+	private static EventQueue queue;
+	private Signal signalname;
+	private int time;
 	private boolean value;
 	
-	public Event(Signal s, int t, boolean v) {
-		sig = s;
-		time = t;
-		value = v;
+	public Event(Signal sig, int time, boolean value){
+		signalname = sig;	//variablen initialisieren
+		this.time =time;
+		this.value=value;
 		
-		//in queue eintragen
-		masterqueue.addEvent(this);
+		queue.addEvent(this); //Externer Methodenaufruf die diese Instanz in die queue speichert.
+		}
+	
+	public static void setEventQueue(EventQueue e){
+		
+		queue = e; // speichert queue f�r ALLE Eventinstanzen als static	
 	}
 	
-	public static void setEventQueue (EventQueue e) {
-		masterqueue = e;
-		
+	public int getTime(){
+		return time;
 	}
 
 	public void propagate() {
-		// TODO Auto-generated method stub
+		//value = wert;
+		//signalname.setTime(time);
+		signalname.setValue2(value, time);
 		
-	}
-
-	public int getTime() {
-		return time;
 	}
 }

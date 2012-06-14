@@ -1,26 +1,26 @@
 /**
  * Klasse TimingSimulator ist ein Logiksimulator, der nur Nand-Gatter simulieren
- * kann und Zeitverz�gerungen ber�cksichtigt. Die zu simulierende Schaltung wird
+ * kann und Zeitverzögerungen berücksichtigt. Die zu simulierende Schaltung wird
  * in der Methode <CODE>buildCircuit()</CODE> der Klasse erzeugt. Es handelt
  * sich hierbei um ein einfaches RS-FlipFlop. Nach der Konstruktion der
- * Schaltung muss zun�chst der Ruhezustand der Schaltung berechnet werden. Dies
- * �bernimmt die Methode <CODE>findSteadyState()</CODE>. Die Eingabe-Events zur
+ * Schaltung muss zunächst der Ruhezustand der Schaltung berechnet werden. Dies
+ * übernimmt die Methode <CODE>findSteadyState()</CODE>. Die Eingabe-Events zur
  * Stimulation der Schaltung werden durch die Methode
  * <CODE>setInputEvents()</CODE> erzeugt. Zum Testen Ihrer Klassen
  * <CODE>Nand</CODE>, <CODE>Signal</CODE>, <CODE>Event</CODE>,und
- * <CODE>EventQueue</CODE> m�ssen Sie einfach nur eine Instanz dieser Klasse
+ * <CODE>EventQueue</CODE> müssen Sie einfach nur eine Instanz dieser Klasse
  * erzeugen und dann die Methode <CODE>simulate()</CODE> aufrufen.
  * 
  * @author Christian Hochberger, TU Dresden
  * @version 1.0 Erste Fassung
  */
 public class TimingSimulator {
-	// EventQueue f�r diesen Simulator, wird im Konstruktor initialisiert
+	// EventQueue für diesen Simulator, wird im Konstruktor initialisiert
 	private EventQueue queue;
 	// Die beiden Eingangssignale
 	private Signal inS, inR;
-	// Die beiden Ausgangssignale (werden nur ben�tigt, wenn mann die Ausg�nge
-	// zwischendurch auch mal ausgeben m�chte)
+	// Die beiden Ausgangssignale (werden nur benötigt, wenn mann die Ausgänge
+	// zwischendurch auch mal ausgeben möchte)
 	private Signal oQ, onQ;
 
 	/**
@@ -29,10 +29,10 @@ public class TimingSimulator {
 	 * RS-FlipFlop.
 	 */
 	public TimingSimulator() {
-		// Erzeugt die EventQueue f�r diesen Simulator
+		// Erzeugt die EventQueue für diesen Simulator
 		queue = new EventQueue();
 
-		// Tr�gt diese EventQueue in ein statisches Feld der Klasse Event ein
+		// Trägt diese EventQueue in ein statisches Feld der Klasse Event ein
 		// Dazu muss Event die statische Methode setEventQueue(EventQueue e)
 		// besitzen.
 		Event.setEventQueue(queue);
@@ -76,8 +76,8 @@ public class TimingSimulator {
 		s4 = new Signal("s4");
 
 		// Alle Gatter anlegen
-		// Parameter des Konstruktors sind die Anzahl von Eing�ngen und
-		// die Verz�gerungszeit
+		// Parameter des Konstruktors sind die Anzahl von Eingängen und
+		// die Verzögerungszeit
 		// Die Inverter sind sozusagen entartete Nand-Gatter (1 Eingang)
 		n1 = new Nand(1, 5);
 		n2 = new Nand(1, 5);
