@@ -17,9 +17,7 @@ public class EventQueue {
 	}
 
 	public Event getFirst() {
-		System.out.print("Wert von " + eventqueue.getFirst().getName() + " ");
-		System.out.print("ist: " + eventqueue.getFirst().getValue() + " ");
-		System.out.println("Zeit: " + eventqueue.getFirst().getTime() + " ");
+		
 		
 		return eventqueue.pollFirst(); // 'return' damit er was zur�ckliefert.
 										// UND L�SCHEN
@@ -44,6 +42,16 @@ public class EventQueue {
 			eventqueue.add(it.previousIndex() + 1, e);
 		}
 
+	}
+	public String toString() {
+		String output = "eventqueue contains:\n";
+		int i=0;
+		for (Event e : eventqueue) {
+			output += i+". "+e.toString()+"\n";
+			i++;
+		}
+		
+		return output;
 	}
 
 }

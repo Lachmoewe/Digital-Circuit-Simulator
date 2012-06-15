@@ -1,4 +1,4 @@
-package Stufe2;
+
 public class Event {
 
 	private static EventQueue queue;
@@ -35,6 +35,14 @@ public class Event {
 		// value = wert;
 		// signalname.setTime(time);
 		signalname.setValue(value, time);
-
 	}
+	
+	public String toString() {
+		String output = "";
+		output =  "Wert von " + this.getName() + " ";
+		output += "ist: " + this.getValue() + " ";
+		output += "Zeit: " + this.getTime() + " ";
+		return output;
+	}
+
 }

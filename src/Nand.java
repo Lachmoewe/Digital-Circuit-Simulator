@@ -1,4 +1,4 @@
-package Stufe2;
+
 public class Nand {
 
 	private int eingänge; // Anzhal der Eingänge
