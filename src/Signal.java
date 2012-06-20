@@ -42,7 +42,7 @@ public class Signal {
 		// spannergatter = new ArrayList<Nand>();
 		value = wert;
 		if (spannergatter.isEmpty()) {
-			System.out.println("Wert von " + signalName + " ist: " + value + " Zeit: " + time);
+			System.out.println(time+": " + signalName + "->" + value);
 		}
 
 		else {

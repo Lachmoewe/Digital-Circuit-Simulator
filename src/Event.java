@@ -39,9 +39,7 @@ public class Event {
 	
 	public String toString() {
 		String output = "";
-		output =  "Wert von " + this.getName() + " ";
-		output += "ist: " + this.getValue() + " ";
-		output += "Zeit: " + this.getTime() + " ";
+		output =  this.getTime() + ": " + this.getName() + "->" + this.getValue();
 		return output;
 	}
 

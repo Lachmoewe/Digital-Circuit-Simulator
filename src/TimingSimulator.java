@@ -155,9 +155,11 @@ public class TimingSimulator {
 	 */
 	public void simulate() {
 		while (queue.hasMore()) {
+			//System.out.println(queue);
 			Event e = queue.getFirst();
 			
-			System.out.println(e);
+			//System.out.println("propagating: "+e);
+			
 			e.propagate();
 		}
 	}
