@@ -32,8 +32,6 @@ public class Event {
 	}
 
 	public void propagate() {
-		// value = wert;
-		// signalname.setTime(time);
 		signalname.setValue(value, time);
 	}
 	

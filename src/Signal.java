@@ -5,7 +5,7 @@ import java.util.Iterator;
 public class Signal {
 	private String signalName;
 	private boolean value;
-	private ArrayList<Nand> spannergatter; // = new ArrayList();;
+	private ArrayList<Nand> spannergatter;
 
 	public Signal(String signalName) {
 		this.signalName = signalName;
@@ -39,7 +39,6 @@ public class Signal {
 	}
 	
 	public void setValue(boolean wert, int time) {
-		// spannergatter = new ArrayList<Nand>();
 		value = wert;
 		if (spannergatter.isEmpty()) {
 			System.out.println(time+": " + signalName + "->" + value);

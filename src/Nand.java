@@ -74,7 +74,7 @@ public class Nand {
 			// sich der wert
 			// geändert hat
 				new Event(ausgangssignal, t += delay, ergebnis);
-			} else { /*System.out.println("keine änderung");*/ }
+			}
 		}
 	}
 }
