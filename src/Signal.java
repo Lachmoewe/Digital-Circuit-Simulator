@@ -5,18 +5,18 @@ import java.util.Iterator;
 public class Signal {
 	private String signalName;
 	private boolean value;
-	private ArrayList<Nand> spannergatter;
+	private ArrayList<Gatter> spannergatter;
 
 	public Signal(String signalName) {
 		this.signalName = signalName;
 		value = false;
-		spannergatter = new ArrayList<Nand>();
+		spannergatter = new ArrayList<Gatter>();
 	}
 
-	public void speichern(Nand name)// Die Arrayliste mit Spannergattern
+	public void speichern(Gatter gatter)// Die Arrayliste mit Spannergattern
 	// befüllen
 	{
-		spannergatter.add(name);
+		spannergatter.add(gatter);
 	}
 
 	public boolean getValue() {
@@ -28,7 +28,7 @@ public class Signal {
 		if (spannergatter.isEmpty()) {
 			System.out.println("Wert von " + signalName + " ist: " + value);
 		} else {
-			for (Nand gatter : spannergatter) { // in the arraylist. Add a gate
+			for (Gatter gatter : spannergatter) { // in the arraylist. Add a gate
 				gatter.berechne(); // by calling callMe()
 			}
 		}
@@ -45,7 +45,7 @@ public class Signal {
 		}
 
 		else {
-			Iterator<Nand> it = spannergatter.iterator();
+			Iterator<Gatter> it = spannergatter.iterator();
 			while (it.hasNext()) {
 				it.next().berechne(time);
 			}
