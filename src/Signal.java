@@ -6,18 +6,18 @@ import java.util.Iterator;
 public class Signal {
 	private String signalName;
 	private boolean value;
-	private ArrayList<Gatter> spannergatter; // = new ArrayList();;
+	private ArrayList<Gate> listenGates; // = new ArrayList();;
 
 	public Signal(String signalName) {
 		this.signalName = signalName;
 		value = false;
-		spannergatter = new ArrayList<Gatter>();
+		listenGates = new ArrayList<Gate>();
 	}
 
-	public void speichern(Gatter name)// Die Arrayliste mit Spannergattern
+	public void save(Gate name)// Die Arrayliste mit Spannergattern
 	// bef�llen
 	{
-		spannergatter.add(name);
+		listenGates.add(name);
 	}
 
 	public boolean getValue() {
@@ -26,11 +26,11 @@ public class Signal {
 
 	public void setValue(boolean wert) {
 		value = wert;
-		if (spannergatter.isEmpty()) {
-			System.out.println("Wert von " + signalName + " ist: " + value);
+		if (listenGates.isEmpty()) {
+			System.out.println("Value of " + signalName + " is: " + value);
 		} else {
-			for (Gatter gatter : spannergatter) { // in the arraylist. Add a gate
-				gatter.berechne(); // by calling callMe()
+			for (Gate gatter : listenGates) { // in the arraylist. Add a gate
+				gatter.calculate(); // by calling callMe()
 			}
 		}
 	}
@@ -43,14 +43,14 @@ public class Signal {
 
 	public void setValue(boolean wert, int time) {
 		value = wert;
-		if (spannergatter.isEmpty()) {
+		if (listenGates.isEmpty()) {
 			System.out.println(time + ": " + signalName + "->" + value);
 		}
 
 		else {
-			Iterator<Gatter> it = spannergatter.iterator();
+			Iterator<Gate> it = listenGates.iterator();
 			while (it.hasNext()) {
-				it.next().berechne(time);
+				it.next().calculate(time);
 			}
 		}
 	}

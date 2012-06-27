@@ -1,6 +1,6 @@
 
 
-public class Not extends Gatter {
+public class Not extends Gate {
 
 	
 	public Not(int delay) {
@@ -9,10 +9,10 @@ public class Not extends Gatter {
 	
 
 	public boolean logic() {
-		boolean ergebnis = true;
-		for (Signal s : eingangssignale) {
-			ergebnis = !s.getValue();
+		boolean result = true;
+		for (Signal s : inputSignals) {
+			result = !s.getValue();
 		}
-		return ergebnis;
+		return result;
 	}
 }

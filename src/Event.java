@@ -2,14 +2,14 @@
 public class Event {
 
 	private static EventQueue queue;
-	private Signal signalname;
+	private Signal signalName;
 	private int time;
 	private boolean value;
 
-	public Event(Signal sig, int time, boolean value) {
-		signalname = sig; // variablen initialisieren
-		this.time = time;
-		this.value = value;
+	public Event(Signal s, int t, boolean v) {
+		signalName = s; // variablen initialisieren
+		this.time = t;
+		this.value = v;
 
 		queue.addEvent(this); // Externer Methodenaufruf die diese Instanz in
 		// die queue speichert.
@@ -25,7 +25,7 @@ public class Event {
 	}
 
 	public String getName() {
-		return signalname.getName();
+		return signalName.getName();
 
 	}
 
@@ -34,7 +34,7 @@ public class Event {
 	}
 
 	public void propagate() {
-		signalname.setValue(value, time);
+		signalName.setValue(value, time);
 	}
 
 	public String toString() {

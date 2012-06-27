@@ -1,17 +1,17 @@
 
 
-public class Nand extends Gatter {
+public class Nand extends Gate {
 
-	public Nand(int eingänge, int delay) {
-		super(eingänge, delay);
+	public Nand(int numInputs, int delay) {
+		super(numInputs, delay);
 	}
 
 	public boolean logic() {
-		boolean ergebnis = true;
-		for (Signal s : eingangssignale) {
-			ergebnis = ergebnis & s.getValue();
+		boolean result = true;
+		for (Signal s : inputSignals) {
+			result = result & s.getValue();
 		}
-		ergebnis = !ergebnis;
-		return ergebnis;
+		result = !result;
+		return result;
 	}
 }

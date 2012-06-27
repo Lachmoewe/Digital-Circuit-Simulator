@@ -1,10 +1,18 @@
 
-public class Latch extends Gatter {
-
+public class Latch extends Gate {
+	
 	public Latch(int delay) {
 		super(1, delay);
 	}
 	public boolean logic() {
-		return true;
+		boolean result = false;
+		boolean enable = inputSignals[0].getValue();
+		boolean data = inputSignals[1].getValue();
+		if (enable) {
+			result = data;
+		} else {
+			result = outputSignals.getValue();
+		}
+		return result;
 	}
 }

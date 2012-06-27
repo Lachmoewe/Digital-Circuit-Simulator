@@ -1,16 +1,16 @@
 
 
-public class And extends Gatter {
+public class And extends Gate {
 
-	public And(int eingänge, int delay) {
-		super(eingänge, delay);
+	public And(int numInputs, int delay) {
+		super(numInputs, delay);
 	}
 
 	public boolean logic() {
-		boolean ergebnis = true;
-		for (Signal s : eingangssignale) {
-			ergebnis = ergebnis & s.getValue();
+		boolean result = true;
+		for (Signal s : inputSignals) {
+			result = result & s.getValue();
 		}
-		return ergebnis;
+		return result;
 	}
 }
