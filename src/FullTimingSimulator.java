@@ -1,13 +1,15 @@
+package Stufe3;
+
 /**
  * Klasse FullTimingSimulator ist ein Logiksimulator, der alle geforderten Gattertypen
- * benutzt und Zeitverzögerungen berücksichtigt.
+ * benutzt und ZeitverzÃ¶gerungen berÃ¼cksichtigt.
  * Die zu simulierende Schaltung wird in der Methode
  * <CODE>buildCircuitX()</CODE> der Klasse erzeugt (mit X in 1,2,3).
  * Diese Methode verwendet weitere Hilfsmethoden um die Schaltung zu
  * erzeugen.  Versuchen Sie doch mal herauszubekommen, was die Schaltung3
- * macht und bis zu welcher Taktfrequenz sie zuverlässig arbeitet.
- * <BR>Nach der Konstruktion der Schaltung muss zunächst der Ruhezustand
- * der Schaltung berechnet werden. Dies übernimmt die Methode
+ * macht und bis zu welcher Taktfrequenz sie zuverlÃ¤ssig arbeitet.
+ * <BR>Nach der Konstruktion der Schaltung muss zunÃ¤chst der Ruhezustand
+ * der Schaltung berechnet werden. Dies Ã¼bernimmt die Methode
  * <CODE>findSteadyStateX()</CODE>. Die Eingabe-Events zur Stimulation
  * der Schaltung werden durch die Methode <CODE>setInputEventsX()</CODE>
  * erzeugt.
@@ -15,16 +17,16 @@
  * <CODE>Or</CODE>, <CODE>And</CODE>, <CODE>Exor</CODE>,
  * <CODE>Buf</CODE>, <CODE>Not</CODE>, <CODE>FF</CODE>, <CODE>Latch</CODE>,
  * <CODE>Signal</CODE>, <CODE>Event</CODE>,und <CODE>EventQueue</CODE>
- * müssen Sie einfach nur eine Instanz dieser Klasse erzeugen und dann
+ * mÃ¼ssen Sie einfach nur eine Instanz dieser Klasse erzeugen und dann
  * die Methode <CODE>simulate()</CODE> aufrufen.
  * @author Christian Hochberger, TU Dresden
  * @version 1.0 Erste Fassung
  */
 public class FullTimingSimulator {
-    // EventQueue für diesen Simulator, wird im Konstruktor initialisiert
+    // EventQueue fÃ¼r diesen Simulator, wird im Konstruktor initialisiert
     private EventQueue	queue;
-    // Die Eingangssignale aller möglichen Schaltungen. Es werden nicht in
-    // jeder Schaltung alle Eingänge verwendet.
+    // Die Eingangssignale aller mÃ¶glichen Schaltungen. Es werden nicht in
+    // jeder Schaltung alle EingÃ¤nge verwendet.
     private Signal writeEnable;
     private Signal clk;
     private Signal memIn[];
@@ -35,8 +37,8 @@ public class FullTimingSimulator {
     // Die Ausgangssignale der dritten Schaltung
     private Signal memOut[];
 
-    // Zähler für die aufgebauten Multiplexer und Zähler, um die Namen der internen
-    // Signale besser generieren zu können.
+    // ZÃ¤hler fÃ¼r die aufgebauten Multiplexer und ZÃ¤hler, um die Namen der internen
+    // Signale besser generieren zu kÃ¶nnen.
     private int muxCnt;
     private int cntCnt;
 
@@ -45,15 +47,15 @@ public class FullTimingSimulator {
      * ermittelt und die Eingabe-Events erzeugt.
      * Simuliert wird je nach Argument eine der drei vorgegebenen Schaltungen
      *  1 = Einfacher Multiplexer 4 zu 1 
-     *  2 = Einfacher synchroner, rücksetzbarer Zähler mit 4 Bit
-     *  3 = Komplexe Schaltung mit einem Zähler vielen Latches und
+     *  2 = Einfacher synchroner, rÃ¼cksetzbarer ZÃ¤hler mit 4 Bit
+     *  3 = Komplexe Schaltung mit einem ZÃ¤hler vielen Latches und
      *      einigen Multiplexern
      */
     public FullTimingSimulator(int version) {
-	// Erzeugt die EventQueue für diesen Simulator
+	// Erzeugt die EventQueue fÃ¼r diesen Simulator
 	queue=new EventQueue();
 
-	// Trägt diese EventQueue in ein statisches Feld der Klasse Event ein
+	// TrÃ¤gt diese EventQueue in ein statisches Feld der Klasse Event ein
 	// Dazu muss Event die statische Methode setEventQueue(EventQueue e)
 	// besitzen.
 	Event.setEventQueue(queue);
@@ -63,21 +65,21 @@ public class FullTimingSimulator {
 	    buildCircuit1();
 	    // Ruhezustand berechnen
 	    findSteadyState1();
-	    // EventQueue mit Eingabe-Events füllen
+	    // EventQueue mit Eingabe-Events fÃ¼llen
 	    setInputEvents1();
 	} else if (version==2) {
 	    // Schaltung aufbauen
 	    buildCircuit2();
 	    // Ruhezustand berechnen
 	    findSteadyState2();
-	    // EventQueue mit Eingabe-Events füllen
+	    // EventQueue mit Eingabe-Events fÃ¼llen
 	    setInputEvents2();
 	} else if (version==3) {
 	    // Schaltung aufbauen
 	    buildCircuit3();
 	    // Ruhezustand berechnen
 	    findSteadyState3();
-	    // EventQueue mit Eingabe-Events füllen
+	    // EventQueue mit Eingabe-Events fÃ¼llen
 	    setInputEvents3();
 	}
     }
@@ -86,7 +88,7 @@ public class FullTimingSimulator {
      * Diese Methode konstruiert einen Multiplexer aus den gegebenen
      * Eingangssignalen, den Steursignalen (und ihrer Negation) und legt den
      * Ausgang an das angegebene Signal. Die gegebene Methode funktioniert
-     * maximal bis zu vier Eingängen.
+     * maximal bis zu vier EingÃ¤ngen.
      */
     private void buildMux(Signal[] inputs, Signal[] select, Signal[] nselect, Signal out) {
 	muxCnt++;
@@ -124,30 +126,30 @@ public class FullTimingSimulator {
     }
 
     /**
-     * Diese Methode konstruiert einen synchronen, rücksetzbaren Zähler.
-     * Übergeben werden ein Taktsignal, ein Reset-Signal und ein Array mit
-     * Augangssignalen. Über die Größe dieses Arrays wird automatisch auch
-     * die Breite des Zählers bestimmt.
+     * Diese Methode konstruiert einen synchronen, rÃ¼cksetzbaren ZÃ¤hler.
+     * Ãœbergeben werden ein Taktsignal, ein Reset-Signal und ein Array mit
+     * Augangssignalen. Ãœber die GrÃ¶ÃŸe dieses Arrays wird automatisch auch
+     * die Breite des ZÃ¤hlers bestimmt.
      */
     private void buildSynCounter(Signal clk, Signal reset, Signal[] outputs) {
 	cntCnt++;
 	String prefix="Cnt"+cntCnt;
 	int numBits=outputs.length;
 
-	FF[] reg = new FF[numBits];
-	Signal notRes=new Signal(prefix+"nReset");
-	Not negCtrl=new Not(2);
-	negCtrl.setInput(0,reset);
-	negCtrl.setOutput(notRes);
+	FF[] reg = new FF[numBits]; //Array von FFs mit der GrÃ¶ÃŸe der Anzahl von Outputs erzeugen 
+	Signal notRes=new Signal(prefix+"nReset"); //Neues Signal Cnt1nReset
+	Not negCtrl=new Not(2);//Inverter mit Delay 2 erzeugen
+	negCtrl.setInput(0,reset);//Eingang 0 mit reset verbinden
+	negCtrl.setOutput(notRes);//Inverter ausgang Signal Cnt1nReset belegen.
 	for (int i=0; i<numBits; i++) {
-	    reg[i]=new FF(20);
-	    reg[i].setInput(0,clk);
-	    Signal regInput=new Signal(prefix+"regI"+i);
-	    Signal newBit=new Signal(prefix+"muxI"+i);
+	    reg[i]=new FF(20);//Neues FF mit Delay 20 wird erzeugt
+	    reg[i].setInput(0,clk);//Eingang 0 wird mit clk verbunden
+	    Signal regInput=new Signal(prefix+"regI"+i);//Neues Signal "Cnt1regI+i"
+	    Signal newBit=new Signal(prefix+"muxI"+i);//Neues signal "Cnt1muxI+i"
 	    if (i==0) {
-		Not feedback=new Not(2);
-		feedback.setInput(0,outputs[0]);
-		feedback.setOutput(newBit);
+		Not feedback=new Not(2); //Neuer Inverter mit delay 2 "feedback"
+		feedback.setInput(0,outputs[0]);//Inverter verbinden mit 1. Output aus dem Array Outputs
+		feedback.setOutput(newBit);//
 	    } else if (i==1) {
 		Exor feedback=new Exor(2,5);
 		feedback.setInput(0,outputs[1]);
@@ -182,7 +184,7 @@ public class FullTimingSimulator {
      * inneren Signale sind nur in dieser Methode bekannt, da sie im Verlauf
      * der Simulation implizit durch die Events, bzw. die Signale angesprochen
      * werden.Simuliert wird ein einfacher Multiplexer der einen aus vier
-     * Eingängen auswählt.
+     * EingÃ¤ngen auswÃ¤hlt.
      */
     private void buildCircuit1() {
 	memIn=new Signal[4];
@@ -204,7 +206,7 @@ public class FullTimingSimulator {
 
     /**
      * Diese Methode konstruiert eine weitere Schaltung.  Simuliert wird
-     * ein einfacher vier Bit synchroner Zähler.
+     * ein einfacher vier Bit synchroner ZÃ¤hler.
      */
     private void buildCircuit2() {
 	reset=new Signal("Reset");
@@ -223,9 +225,9 @@ public class FullTimingSimulator {
     }
 
     /**
-     * Diese Methode konstruiert die dritte mögliche Schaltung.  Diese ist
-     * sehr kompliziert (enthält ca. 150 Gatter). Die genaue Funktion
-     * können Sie ja mal versuchen herauszubekommen.
+     * Diese Methode konstruiert die dritte mÃ¶gliche Schaltung.  Diese ist
+     * sehr kompliziert (enthÃ¤lt ca. 150 Gatter). Die genaue Funktion
+     * kÃ¶nnen Sie ja mal versuchen herauszubekommen.
      */
     private void buildCircuit3() {
 	writeEnable=new Signal("WriteEnable");
@@ -235,7 +237,7 @@ public class FullTimingSimulator {
 	memOAddr = new Signal[3];
 	memIAddr = new Signal[3];
 
-	// Werden intern für den Aufbau der Multiplexer gebraucht
+	// Werden intern fÃ¼r den Aufbau der Multiplexer gebraucht
 	Signal nmemOAddr[] = new Signal[3];
 	Signal nmemIAddr[] = new Signal[3];
 
@@ -282,7 +284,7 @@ public class FullTimingSimulator {
 	    }
 	}
 	// Hier wird nun der Ausgangsteil der Speichermatrix aufgebaut
-	// Dazu werden zunächst die beiden Hälften des Speichers getrennt
+	// Dazu werden zunÃ¤chst die beiden HÃ¤lften des Speichers getrennt
 	// gemultiplext, danach werden diese beiden Signale dann zusammen-
 	// gefasst.
 	Signal[] memDint=new Signal[4];
@@ -311,13 +313,13 @@ public class FullTimingSimulator {
 	    buildMux(h, upperAddr, nupperAddr, memOut[i]);
 	}
 
-	// Hier wird nun die Adressgenerierung für den Speicher aufgebaut.
+	// Hier wird nun die Adressgenerierung fÃ¼r den Speicher aufgebaut.
 	// Im wesentlichen handelt es sich hier um einen synchronen,
-	// rücksetzbaren Zähler, der immer dann zurückgesetzt wird, wenn
+	// rÃ¼cksetzbaren ZÃ¤hler, der immer dann zurÃ¼ckgesetzt wird, wenn
 	// das oberste Bit des Speicherinhalts eine 1 liefert.
 	buildSynCounter(clk, memOut[3], memOAddr);
 
-	// Zählerausgänge auch auf Signale führen, damit man die Adressierung
+	// ZÃ¤hlerausgÃ¤nge auch auf Signale fÃ¼hren, damit man die Adressierung
 	// nachvollziehen kann.
 	Buf[] obuf=new Buf[3];
 	for (int i=0; i<3; i++) {
@@ -330,13 +332,13 @@ public class FullTimingSimulator {
     
     /**
      * Diese Methode ermittelt den Ruhezustand der Schaltung. Dazu werden
-     * vernünftige Initialwerte an die Eingänge angelegt. Diese Initialwerte
-     * müssen mindestens einmal durch die Schaltung propagiert werden,
+     * vernÃ¼nftige Initialwerte an die EingÃ¤nge angelegt. Diese Initialwerte
+     * mÃ¼ssen mindestens einmal durch die Schaltung propagiert werden,
      * bis sich ein stabiler Zustand einstellt. Um das festzustellen gibt
-     * es verschiedene Methoden (im Gatter mitzählen, wie oft sich der Wert
-     * ändert. Im Signal mitzählen, wie oft es geändert wurde).
-     * Bei diesem Propagieren darf natürlich nicht mit den Zeitverzögerungen
-     * gearbeitet werden.  Sie können also im Grunde die Wert-Propagierung
+     * es verschiedene Methoden (im Gatter mitzÃ¤hlen, wie oft sich der Wert
+     * Ã¤ndert. Im Signal mitzÃ¤hlen, wie oft es geÃ¤ndert wurde).
+     * Bei diesem Propagieren darf natÃ¼rlich nicht mit den ZeitverzÃ¶gerungen
+     * gearbeitet werden.  Sie kÃ¶nnen also im Grunde die Wert-Propagierung
      * aus der ersten Teilaufgabe benutzen.
      */
     private void findSteadyState1() {
@@ -349,7 +351,7 @@ public class FullTimingSimulator {
     }
 
     /**
-     * Genau wie die vorhergehende Methode nur für die Schaltung zwei
+     * Genau wie die vorhergehende Methode nur fÃ¼r die Schaltung zwei
      */
     private void findSteadyState2() {
 	clk.setValue(false);
@@ -357,7 +359,7 @@ public class FullTimingSimulator {
     }
 
     /**
-     * Genau wie die vorhergehende Methode nur für die Schaltung drei
+     * Genau wie die vorhergehende Methode nur fÃ¼r die Schaltung drei
      */
     private void findSteadyState3() {
 	for (int i=0; i<4; i++) {
@@ -389,7 +391,7 @@ public class FullTimingSimulator {
     }
 
     /**
-     * Ebenfalls die Erzeugung der Stimuli für die zweite eingebaute Schaltung
+     * Ebenfalls die Erzeugung der Stimuli fÃ¼r die zweite eingebaute Schaltung
      *
      */
     private void setInputEvents2() {
@@ -405,7 +407,7 @@ public class FullTimingSimulator {
     }
 
     /**
-     * Ebenfalls die Erzeugung der Stimuli für die dritte eingebaute Schaltung
+     * Ebenfalls die Erzeugung der Stimuli fÃ¼r die dritte eingebaute Schaltung
      *
      */
     private void setInputEvents3() {
@@ -425,10 +427,10 @@ public class FullTimingSimulator {
 	}
     }
     /**
-     * Diese Methode führt die eigentliche Simulation durch. Dazu wird
-     * geprüft, ob in der EventQueue noch weitere Events vorhanden sind. Ist
-     * dies der Fall, dann wird das nächste anstehende Event behandelt. Dazu
-     * muss das Event die Methode propagate() zur Verfügung stellen, die
+     * Diese Methode fÃ¼hrt die eigentliche Simulation durch. Dazu wird
+     * geprÃ¼ft, ob in der EventQueue noch weitere Events vorhanden sind. Ist
+     * dies der Fall, dann wird das nÃ¤chste anstehende Event behandelt. Dazu
+     * muss das Event die Methode propagate() zur VerfÃ¼gung stellen, die
      * dann das betroffene Signal informiert.
      */
     public void simulate() {
@@ -440,14 +442,14 @@ public class FullTimingSimulator {
     }
     
     /**
-     * Main Methode dieser Klasse. Sie müssen das im Moment noch nicht
-     * verstehen. Diese Methode wird benötigt, wenn Sie den Simulator ohne
+     * Main Methode dieser Klasse. Sie mÃ¼ssen das im Moment noch nicht
+     * verstehen. Diese Methode wird benÃ¶tigt, wenn Sie den Simulator ohne
      * BlueJ laufen lassen wollen. Wenn Sie diese Klasse in BlueJ nutzen,
      * dann ignorieren Sie diese Methode einfach.
      * 
-     * Wenn Sie die verschiedenen Schaltungen testen wollen, dann müssen
-     * Sie den Parameter des Konstruktors entsprechend ändern. Das können
-     * Sie natürlich auch durch Auswertung der Kommandozeilenparameter tuen.
+     * Wenn Sie die verschiedenen Schaltungen testen wollen, dann mÃ¼ssen
+     * Sie den Parameter des Konstruktors entsprechend Ã¤ndern. Das kÃ¶nnen
+     * Sie natÃ¼rlich auch durch Auswertung der Kommandozeilenparameter tuen.
      */
     static public void main(String[] args) {
 	FullTimingSimulator	t=new FullTimingSimulator(1);
