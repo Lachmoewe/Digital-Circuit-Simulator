@@ -49,10 +49,19 @@ public abstract class Gatter {
 		sig.speichern(this);
 	}
 	public void berechne() {
-		
+		boolean ergebnis=logic();
+		if (ausgangssignal.getValue()!=ergebnis) {
+			ausgangssignal.setValue(ergebnis);
+		}
 	}
 	public void berechne(int t) {
-		
+		boolean ergebnis=logic();
+		if (ausgangssignal.getValue()!=ergebnis) {
+			new Event(ausgangssignal, t += delay, logic());
+		}
+	}
+	public boolean logic() {
+		return true;
 	}
 }
 		
