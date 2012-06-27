@@ -1,34 +1,35 @@
 
-public class Nand extends Gatter{
+
+public class Nand extends Gatter {
 
 	public Nand(int eingänge, int delay) {
 		super(eingänge, delay);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void berechne() {
 		boolean ergebnis = true;
-		for (Signal s : getEingangssignale()) {
+		for (Signal s : eingangssignale) {
 			ergebnis = ergebnis & s.getValue();
 		}
 		ergebnis = !ergebnis;
-		if (ergebnis != getAusgangssignal().getValue()) {
-			getAusgangssignal().setValue(ergebnis);
+		if (ergebnis != ausgangssignal.getValue()) {
+			ausgangssignal.setValue(ergebnis);
 		}
 	}
 
 	public void berechne(int t) {
 		boolean ergebnis = true;
-		for (Signal s : getEingangssignale()) {
+		for (Signal s : eingangssignale) {
 			ergebnis = ergebnis & s.getValue();
 		}
 		ergebnis = !ergebnis;
 		{
-			if (ergebnis != getAusgangssignal().getValue()) { // nur ein event
-			// erzeugen, wenn
-			// sich der wert
-			// geändert hat
-				new Event(getAusgangssignal(), t += getDelay(), ergebnis);
+			if (ergebnis != ausgangssignal.getValue()) { // nur ein event
+															// erzeugen, wenn
+															// sich der wert
+															// ge�ndert hat
+				new Event(ausgangssignal, t += delay, ergebnis);
+			} else { // System.out.println("keine �nderung");
 			}
 		}
 	}

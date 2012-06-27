@@ -1,11 +1,12 @@
 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Signal {
 	private String signalName;
 	private boolean value;
-	private ArrayList<Gatter> spannergatter;
+	private ArrayList<Gatter> spannergatter; // = new ArrayList();;
 
 	public Signal(String signalName) {
 		this.signalName = signalName;
@@ -13,10 +14,10 @@ public class Signal {
 		spannergatter = new ArrayList<Gatter>();
 	}
 
-	public void speichern(Gatter gatter)// Die Arrayliste mit Spannergattern
-	// befüllen
+	public void speichern(Gatter name)// Die Arrayliste mit Spannergattern
+	// bef�llen
 	{
-		spannergatter.add(gatter);
+		spannergatter.add(name);
 	}
 
 	public boolean getValue() {
@@ -33,15 +34,17 @@ public class Signal {
 			}
 		}
 	}
-	
-	public String getName(){
-		return signalName;   //Wird von der methode getName in Event aufgerufen, welche von system.out.println in Timingsimulator aufgeruffen wird
+
+	public String getName() {
+		return signalName; // Wird von der methode getName in Event aufgerufen,
+							// welche von system.out.println in Timingsimulator
+							// aufgeruffen wird
 	}
-	
+
 	public void setValue(boolean wert, int time) {
 		value = wert;
 		if (spannergatter.isEmpty()) {
-			System.out.println(time+": " + signalName + "->" + value);
+			System.out.println(time + ": " + signalName + "->" + value);
 		}
 
 		else {

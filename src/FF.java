@@ -1,9 +1,11 @@
 
+
 public class FF extends Gatter {
 
 	public FF(int delay) {
-		super(1, delay);
+		super(2, delay);
 		// TODO Auto-generated constructor stub
 	}
-	// TODO ist das hier zu gatter kompatibel?
+
+
 }

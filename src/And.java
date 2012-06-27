@@ -1,4 +1,4 @@
-package Stufe3;
+
 
 public class And extends Gatter {
 
@@ -27,9 +27,9 @@ public class And extends Gatter {
 			if (ergebnis != ausgangssignal.getValue()) { // nur ein event
 															// erzeugen, wenn
 															// sich der wert
-															// geändert hat
+															// ge�ndert hat
 				new Event(ausgangssignal, t += delay, ergebnis);
-			} else { // System.out.println("keine änderung");
+			} else { // System.out.println("keine �nderung");
 			}
 		}
 	}
