@@ -1,5 +1,3 @@
-
-
 /**
  * Klasse FullTimingSimulator ist ein Logiksimulator, der alle geforderten Gattertypen
  * benutzt und Zeitverz�gerungen ber�cksichtigt.
@@ -136,20 +134,20 @@ public class FullTimingSimulator {
 	String prefix="Cnt"+cntCnt;
 	int numBits=outputs.length;
 
-	FF[] reg = new FF[numBits]; //Array von FFs mit der Gr��e der Anzahl von Outputs erzeugen 
-	Signal notRes=new Signal(prefix+"nReset"); //Neues Signal Cnt1nReset
-	Not negCtrl=new Not(2);//Inverter mit Delay 2 erzeugen
-	negCtrl.setInput(0,reset);//Eingang 0 mit reset verbinden
-	negCtrl.setOutput(notRes);//Inverter ausgang Signal Cnt1nReset belegen.
+	FF[] reg = new FF[numBits];
+	Signal notRes=new Signal(prefix+"nReset");
+	Not negCtrl=new Not(2);
+	negCtrl.setInput(0,reset);
+	negCtrl.setOutput(notRes);
 	for (int i=0; i<numBits; i++) {
-	    reg[i]=new FF(20);//Neues FF mit Delay 20 wird erzeugt
-	    reg[i].setInput(0,clk);//Eingang 0 wird mit clk verbunden
-	    Signal regInput=new Signal(prefix+"regI"+i);//Neues Signal "Cnt1regI+i"
-	    Signal newBit=new Signal(prefix+"muxI"+i);//Neues signal "Cnt1muxI+i"
+	    reg[i]=new FF(20);
+	    reg[i].setInput(0,clk);
+	    Signal regInput=new Signal(prefix+"regI"+i);
+	    Signal newBit=new Signal(prefix+"muxI"+i);
 	    if (i==0) {
-		Not feedback=new Not(2); //Neuer Inverter mit delay 2 "feedback"
-		feedback.setInput(0,outputs[0]);//Inverter verbinden mit 1. Output aus dem Array Outputs
-		feedback.setOutput(newBit);//
+		Not feedback=new Not(2);
+		feedback.setInput(0,outputs[0]);
+		feedback.setOutput(newBit);
 	    } else if (i==1) {
 		Exor feedback=new Exor(2,5);
 		feedback.setInput(0,outputs[1]);
@@ -452,7 +450,7 @@ public class FullTimingSimulator {
      * Sie nat�rlich auch durch Auswertung der Kommandozeilenparameter tuen.
      */
     static public void main(String[] args) {
-	FullTimingSimulator	t=new FullTimingSimulator(1);
+	FullTimingSimulator	t=new FullTimingSimulator(2);
 	t.simulate();
     }
 }

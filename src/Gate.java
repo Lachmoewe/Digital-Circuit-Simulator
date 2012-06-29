@@ -5,7 +5,7 @@ public abstract class Gate {
 	protected int numInputs; // Anzhal der Eing�nge
 	protected Signal[] inputSignals; // Instanzen der Klasse Signale werden
 	// hier gespeichert.
-	protected Signal outputSignals;
+	protected Signal outputSignal;
 	protected int delay;
 
 	public Gate(int inputs, int delay) { // Konstruktor konstruiert ...
@@ -39,7 +39,7 @@ public abstract class Gate {
 	}
 	public void setOutput(Signal s) {
 		// Defensiver Kram
-		outputSignals = s;
+		outputSignal = s;
 
 	}
 	public void connect(Signal s)// die methode speichern aus der Klasse
@@ -50,15 +50,15 @@ public abstract class Gate {
 	}
 	public void calculate() {
 		boolean result=logic();
-		if (outputSignals.getValue()!=result) {
-			outputSignals.setValue(result);
+		if (outputSignal.getValue()!=result) {
+			outputSignal.setValue(result);
 		}
 	}
 	public void calculate(int t) {
 		boolean result=logic();
-		if (outputSignals.getValue()!=result) {
-			new Event(outputSignals, t += delay, result);
-		}
+		//if (outputSignals.getValue()!=result) {
+			new Event(outputSignal, t += delay, result);
+		//}
 	}
 	public boolean logic() {
 		return true;

@@ -2,8 +2,8 @@
 
 public class Exor extends Gate {
 
-	public Exor(int eingänge, int delay) {
-		super(eingänge, delay);
+	public Exor(int numInputs, int delay) {
+		super(numInputs, delay);
 	}
 	public boolean logic() {
 		boolean result = false;

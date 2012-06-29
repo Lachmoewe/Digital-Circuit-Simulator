@@ -2,16 +2,16 @@
 public class Latch extends Gate {
 	
 	public Latch(int delay) {
-		super(1, delay);
+		super(2, delay);
 	}
 	public boolean logic() {
-		boolean result = false;
+		boolean result = outputSignal.getValue();
 		boolean enable = inputSignals[0].getValue();
 		boolean data = inputSignals[1].getValue();
 		if (enable) {
 			result = data;
 		} else {
-			result = outputSignals.getValue();
+			result = outputSignal.getValue();
 		}
 		return result;
 	}
