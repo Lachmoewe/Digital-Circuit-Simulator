@@ -83,7 +83,7 @@ public class DigitalCircuitSimulator {
 		}
 		
 		else if (result[0].equals("#")) {
-			//do nothing because it's a comment 
+			//do nothing because it's a comment  
 		}
 		
 	}
