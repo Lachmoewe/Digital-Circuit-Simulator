@@ -2,27 +2,29 @@
 
 public abstract class Gate {
 
-	protected int numInputs; // Anzhal der Eing�nge
+	protected int numInputs; // Anzhal der Eing���nge
 	protected Signal[] inputSignals; // Instanzen der Klasse Signale werden
 	// hier gespeichert.
 	protected Signal outputSignal;
 	protected int delay;
+	private int timer =10;
+	private boolean outputValue;
 
 	public Gate(int inputs, int delay) { // Konstruktor konstruiert ...
 		this.delay = delay;
-		this.numInputs = inputs; // Datenfeld Eing�nge wird mit dem Wert der
-		// Lokalen Variable Eing�nge gef�llt.
-		inputSignals = new Signal[inputs]; // Ein Array mit der Gr��e
-		// *Eing�nge* wird hergestellt
+		this.numInputs = inputs; // Datenfeld Eing���nge wird mit dem Wert der
+		// Lokalen Variable Eing���nge gef���llt.
+		inputSignals = new Signal[inputs]; // Ein Array mit der Gr������e
+		// *Eing���nge* wird hergestellt
 		// in dem die versch.
 		// Signalinstanzen gespeichert
-		// werden k�nnen.
+		// werden k���nnen.
 	}
 
 
 	public void setInput(int inputNum, Signal s) {
 		if ((inputNum >= 0) && (inputNum < numInputs)) // Nur
-		// zul�ssige
+		// zul���ssige
 		// Eingangsnummern
 		// verwenden
 		{
@@ -50,15 +52,22 @@ public abstract class Gate {
 	}
 	public void calculate() {
 		boolean result=logic();
-		if (outputSignal.getValue()!=result) {
+		if (outputValue!=result) {
+			outputValue = result;
+			outputSignal.setValue(result);
+		}
+		else if (timer > 0){
+			timer--;
+			outputValue = result;
 			outputSignal.setValue(result);
 		}
 	}
 	public void calculate(int t) {
 		boolean result=logic();
-		//if (outputSignals.getValue()!=result) {
+		if (outputValue!=result) {
+		    outputValue = result;
 			new Event(outputSignal, t += delay, result);
-		//}
+		}
 	}
 	public boolean logic() {
 		return true;

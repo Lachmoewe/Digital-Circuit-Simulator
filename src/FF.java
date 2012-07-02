@@ -1,6 +1,7 @@
 public class FF extends Gate {
 
 	private boolean previousClk;
+	boolean result;
 	public FF(int delay) {
 		super(2, delay);
 		previousClk = false;
@@ -9,17 +10,18 @@ public class FF extends Gate {
 	public boolean logic() {
 		boolean clk = inputSignals[0].getValue();
 		boolean data = inputSignals[1].getValue();
-		boolean result = outputSignal.getValue();
-
-		if (clk = true && previousClk != clk /*&& time==inputSignals[0].getPreviousTime()*/) {
-
-			if (data != result) {
-				result = data;
-			}
-			previousClk=clk;
-		}
 		
+		//boolean result = outputSignal.getValue();
+
+		if (clk && (!previousClk) /*&& time==inputSignals[0].getPreviousTime()*/) {
+
+			//if (data != result) {
+				result = data;
+			//}
+			
+		}
+		previousClk=clk;
 		return result;
 	}
-
+ 
 }

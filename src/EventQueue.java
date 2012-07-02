@@ -20,7 +20,7 @@ public class EventQueue {
 
 	public Event getFirst() {
 
-		return eventqueue.pollFirst(); // 'return' UND L�SCHEN
+		return eventqueue.pollFirst(); // 'return' UND L���SCHEN
 	}
 
 	public void addEvent(Event e) // Methode die Events in eine Liste speichert
@@ -33,21 +33,27 @@ public class EventQueue {
 		} 
 		else 
 		{
+			boolean reallyAddEvent=true;
 			int index = 0;
 			for (Event event : eventqueue) {
 				if (e.getTime() >= event.getTime()) {
 					index++;
 				}
+				if (e.getTime()==event.getTime() && e.getValue()==event.getValue() && e.getName()==event.getName()) {
+					reallyAddEvent=false;
+				}
 			}
-			eventqueue.add(index, e);
+			if (reallyAddEvent) {
+				eventqueue.add(index, e);
+			}
 		}
 	}
 
 	public String toString() {
-		String output = "eventqueue contains:\n";
+		String output = "    eventqueue contains:\n";
 		int i = 0;
 		for (Event e : eventqueue) {
-			output += i + ". " + e.toString() + "\n";
+			output +="        "+ i + ". " + e.toString() + "\n";
 			i++;
 		}
 

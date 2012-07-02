@@ -17,7 +17,7 @@ public class Event {
 
 	public static void setEventQueue(EventQueue e) {
 
-		queue = e; // speichert queue f�r ALLE Eventinstanzen als static
+		queue = e; // speichert queue f���r ALLE Eventinstanzen als static
 	}
 
 	public int getTime() {
@@ -29,12 +29,13 @@ public class Event {
 
 	}
 
-	public boolean getValue() { // F�r die println methode in TimingSimulator
+	public boolean getValue() { // F���r die println methode in TimingSimulator
 		return value;
 	}
 
 	public void propagate() {
 		signalName.setValue(value, time);
+		//System.out.println(queue.toString());
 	}
 
 	public String toString() {

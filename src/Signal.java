@@ -17,7 +17,7 @@ public class Signal {
 	}
 
 	public void save(Gate name)// Die Arrayliste mit Spannergattern
-	// bef�llen
+	// bef���llen
 	{
 		listenGates.add(name);
 	}
@@ -48,9 +48,9 @@ public class Signal {
 		}
 
 		else {
-			Iterator<Gate> it = listenGates.iterator();
-			while (it.hasNext()) {
-				it.next().calculate(t);
+				Iterator<Gate> it = listenGates.iterator();
+				while (it.hasNext()) {
+					it.next().calculate(t);
 			}
 		}
 		previousTime=t;
