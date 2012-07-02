@@ -1,0 +1,31 @@
+# Ein Beispiel, das Latches verwendet
+# Realisiert wird ein flankengesteuertes D-Flip-Flop
+
+# Eingaenge der Schaltung
+Input d,c;
+
+# Ausgaenge der Schaltung
+Output q;
+
+# Signale, die nur innerhalb der Schaltung verwendet werden
+Signal i1,i2,i3;
+
+Gate l1 LATCH Delay 5;
+Gate l2 LATCH Delay 5;
+
+Gate n1 NOT Delay 3;
+Gate n2 NOT Delay 3;
+
+n1.i1=c;
+n1.o=i1;
+
+n2.i1=i1;
+n2.o=i2;
+
+l1.d=d;
+l1.e=i1;
+l1.q=i3;
+
+l2.d=i3;
+l2.e=i2;
+l2.q=q;

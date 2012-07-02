@@ -10,9 +10,13 @@ public class DigitalCircuitSimulator {
 		Event.setEventQueue(queue);
 		gateList = new HashMap();
 		signalList = new HashMap();
+		System.out.print("Reading Circuitfile: " + circuitFile + " ... ");
 		readFile(circuitFile);
-		readFile(eventFile);
+		System.out.println("done.");
 
+		System.out.print("Reading Eventfile: " + eventFile + " ... ");
+		readFile(eventFile);
+		System.out.println("done.");
 	}
 
 	public void readFile(String filename) {
@@ -28,31 +32,31 @@ public class DigitalCircuitSimulator {
 	}
 
 	private void addEvents(String in) {
-		in.replaceAll(" *", " ");
+		in = in.replaceAll(" +", " ");
 		String[] result = in.split("\\s");
-		int time = Integer.parseInt(result[0]);
-		if (result[2].equals("1")) {
-			new Event(signalList.get(result[1]), time, true);
-		} else if (result[2].equals("0")) {
-			new Event(signalList.get(result[1]), time, false);
+
+		if (result[0].equals("#") || result.length <= 1) {
+
+		} else {
+			int time = Integer.parseInt(result[0]);
+
+			if (result[2].equals("1")) {
+				new Event(signalList.get(result[1]), time, true);
+			} else if (result[2].equals("0")) {
+				new Event(signalList.get(result[1]), time, false);
+			}
 		}
 	}
 
 	public void buildCircuit(String in) {
-		//String in1 = "";
 		in = in.replaceAll(";", ""); // these methods
 		in = in.replaceAll(", ", ","); // remove all
 		in = in.replaceAll(" +", " "); // unwanted symbols
-		//in = in.replaceAll("   ", " "); 
 		in = in.replaceAll("\\.", " ");// from our String
 		String[] result = in.split(" "); // String gets split @ space
-		System.out.println(in);
-		System.out.println(result.length);
-		
-		if (result.length != 0) {
-			if (result[0].equals("Signal") || result[0].equals("Input")
-					|| result[0].equals("Output")) { // when it finds Signal,
-														// Output or Input
+
+		if (result.length > 1) {
+			if (result[0].equals("Signal")) { // when it finds Signal
 				String[] multIn = result[1].split(","); // handling multiple
 														// inputs
 														// per line
@@ -62,10 +66,20 @@ public class DigitalCircuitSimulator {
 				}
 			}
 
+			else if (result[0].equals("Input") || result[0].equals("Output")) { // when it finds Output,
+				String[] multIn = result[1].split(","); 
+				for (String s : multIn) {
+					if (!signalList.containsKey(s)) {
+						Signal signalToAdd = new Signal(s);
+						signalList.put(s, signalToAdd);
+					}
+					signalList.get(s).setPrintValue();
+				}
+			}
+
 			else if (result[0].equals("Gate")) { // when it finds Gate
 				Gate gateToAdd;
-				String gateType = result[1];
-				System.out.println(result[4]);
+				String gateType = result[2];
 				int delay = Integer.parseInt(result[4]);
 				int numInputs = gateType.charAt(gateType.length() - 1) - 48;
 				gateType = gateType.replaceAll("[0-9]", "");
@@ -107,16 +121,15 @@ public class DigitalCircuitSimulator {
 				}
 			}
 
-			else if (result[0].equals("#") || result.length == 1) {
+			else if (result[0].equals("#")) {
 				// do nothing because it's a comment
 			}
 
-			else if (result[1].equals("i[0-9]")) {
+			else if (result[1].charAt(0)==('i')) {
 				String inputNum = result[1].replaceAll("[a-z]", "");
-				gateList.get(result[0]).setInput(Integer.parseInt(inputNum),
+				gateList.get(result[0]).setInput(Integer.parseInt(inputNum)-1,
 						signalList.get(result[3]));
 			} else if (result[1].equals("o")) {
-				System.out.println("Setting Gate: "+result[0]+" to "+result[3]);
 				gateList.get(result[0]).setOutput(signalList.get(result[3]));
 			}
 		}
@@ -131,10 +144,9 @@ public class DigitalCircuitSimulator {
 	}
 
 	public static void main(String[] args) {
-		String circuitFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/beispiel1o.cir";
-		String eventFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/beispiel1o.events";
-		DigitalCircuitSimulator t = new DigitalCircuitSimulator(circuitFile,
-				eventFile);
+		String circuitFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/beispiel1o2.cir";
+		String eventFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/beispiel1o.events";
+		DigitalCircuitSimulator t = new DigitalCircuitSimulator(circuitFile,eventFile);
 		t.simulate();
 	}
 }

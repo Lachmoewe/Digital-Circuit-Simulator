@@ -1,0 +1,99 @@
+# Ein Beispiel, das einen Zustandsautomaten mit FlipFlops realisiert
+# Der Automat hat 7 Zustände, die der Reihe nach durchlaufen werden
+
+# Eingaenge der Schaltung
+Input a;
+
+# Ausgaenge der Schaltung
+Output y0,y1,y2;
+
+# Nicht negierte Ausgänge der FlipFlops
+Signal s0,s1,s2;
+# Negierte Ausgänge der FlipFlops
+Signal ns0,ns1,ns2;
+
+# Signale, die nur innerhalb der Schaltung verwendet werden
+Signal i1,i2,i3,i4,i5,i6;
+Signal f0,f1,f2;
+
+Gate ff0 FF Delay 5;
+Gate ff1 FF Delay 5;
+Gate ff2 FF Delay 5;
+
+Gate a1 AND2 Delay 7;
+Gate a2 AND2 Delay 7;
+Gate a3 AND2 Delay 7;
+Gate n1 NOR3 Delay 10;
+Gate a4 AND2 Delay 7;
+Gate a5 AND3 Delay 8;
+
+Gate o1 OR3 Delay 8;
+Gate o2 OR2 Delay 7;
+Gate o3 OR2 Delay 7;
+
+Gate b0 BUF Delay 1;
+Gate b1 BUF Delay 1;
+Gate b2 BUF Delay 1;
+
+b0.i1=s0;
+b0.o=y0;
+b1.i1=s1;
+b1.o=y1;
+b2.i1=s2;
+b2.o=y2;
+
+ff0.c=a;
+ff1.c=a;
+ff2.c=a;
+
+ff0.d=f0;
+ff1.d=f1;
+ff2.d=f2;
+
+ff0.q=s0;
+ff1.q=s1;
+ff2.q=s2;
+
+ff0.nq=ns0;
+ff1.nq=ns1;
+ff2.nq=ns2;
+
+a1.i1=s2;
+a1.i2=ns1;
+a1.o=i1;
+
+a2.i1=ns2;
+a2.i2=s0;
+a2.o=i2;
+
+a3.i1=ns1;
+a3.i2=s0;
+a3.o=i3;
+
+n1.i1=s2;
+n1.i2=s1;
+n1.i3=s0;
+n1.o=i4;
+
+a4.i1=ns2;
+a4.i2=s1;
+a4.o=i5;
+
+a5.i1=s2;
+a5.i2=ns1;
+a5.i3=s0;
+a5.o=i6;
+
+o1.i1=i1;
+o1.i2=i2;
+o1.i3=i3;
+o1.o=f0;
+
+o2.i1=i3;
+o2.i2=i4;
+o2.o=f1;
+
+o3.i1=i5;
+o3.i2=i6;
+o3.o=f2;
+

@@ -1,0 +1,45 @@
+# Kommentarzeilen beginnen mit einem #-Symbol, Leerzeilen werden ignoriert
+# Beschreibung eines Volladdierer bestehend aus 2 Halbaddierern.
+
+# Eingaenge der Schaltung
+Input a,b,cin;
+
+# Ausgaenge der Schaltung
+Output s,cout;
+
+# Signale, die nur innerhalb der Schaltung verwendet werden
+# Um sie auch anzuzeigen sind sie auch als Output definiert.
+# Jedes Signal einzeln kann zum Output gemacht werden.
+Output i1, i2;
+Output i3;
+
+# Definition aller Gatter
+# Zu den Gattern muss jeweils eine Verzoegerung angegeben werden
+Gate g1 AND2  Delay 4;
+Gate g2 EXOR2 Delay 8;
+Gate g3 AND2  Delay 4;
+Gate g4 EXOR2 Delay 8;
+Gate g6 OR2   Delay 4;
+
+# g1 und g2 bilden den 1. Halbaddierer
+g1.i1 = a;
+g1.i2 = b;
+g1.o  = i1;
+
+g2.i1 = a;
+g2.i2 = b;
+g2.o  = i2;
+
+# g3 und g4 bilden den 2. Halbaddierer
+g3.i1 = i2;
+g3.i2 = cin;
+g3.o  = i3;
+
+g4.i1 = i2;
+g4.i2 = cin;
+g4.o  = s;
+
+# g6 bildet den Uebertrag des Volladdierer
+g6.i1 = i1;
+g6.i2 = i3;
+g6.o  = cout;

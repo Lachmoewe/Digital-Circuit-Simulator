@@ -8,6 +8,7 @@ public class Signal {
 	private boolean value;
 	private ArrayList<Gate> listenGates; // = new ArrayList();;
 	private int previousTime;
+	private boolean printValue=false;
 
 	public Signal(String signalName) {
 		this.signalName = signalName;
@@ -40,18 +41,14 @@ public class Signal {
 	public void setValue(boolean v, int t) {
 		boolean oldValue=value;
 		value = v;
-		if (listenGates.isEmpty()) {
-			if (oldValue!=value) {
-				System.out.println(t + ": " + signalName + " = " + value);
-			}
-			
-		}
-
-		else {
+		if (!listenGates.isEmpty()) {			
 				Iterator<Gate> it = listenGates.iterator();
 				while (it.hasNext()) {
 					it.next().calculate(t);
 			}
+		}
+		if (oldValue!=value&&printValue) {
+			System.out.println(t + ": " + signalName + " = " + value);
 		}
 		previousTime=t;
 	}
@@ -63,6 +60,11 @@ public class Signal {
 	}
 	public int getPreviousTime() {
 		return previousTime;
+	}
+
+	public void setPrintValue() {
+		printValue=true;
+		
 	}
 
 	
