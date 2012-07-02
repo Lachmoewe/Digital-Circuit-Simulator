@@ -30,7 +30,7 @@ public class DigitalCircuitSimulator {
 		in.replaceAll("  ", " ");	//from our String
 		String[] result = in.split("\\s"); //String gets split @ space
 		
-		if (result[0].equals("Signal")) {	//when it finds Signal
+		if (result[0].equals("Signal") || result[0].equals("Input") || result[0].equals("Output")) {	//when it finds Signal
 			String[] multIn = result[1].split(","); //handling multiple inputs per line
 			for (String s : multIn) {
 				Signal signalToAdd = new Signal(s);
@@ -41,14 +41,45 @@ public class DigitalCircuitSimulator {
 		else if (result[0].equals("Gate")) { //when it finds Gate
 			Gate gateToAdd;
 			String gateType = result[1];
-			int delay = result[4].charAt(0)-97;
-			int numInputs = gateType.charAt(gateType.length()-1)-97;
-			gateType = gateType.replaceAll("all numbers", "");
+			int delay = Integer.parseInt(result[4]);
+			int numInputs = gateType.charAt(gateType.length()-1)-48;
+			gateType = gateType.replaceAll("[0-9]", "");
 			if (gateType.equals("AND")) {
 				gateToAdd = new And(numInputs,delay);
+				gateList.put(result[1], gateToAdd);
 			}
-			gateList.put(result[1], gateToAdd);
-			
+			if (gateType.equals("BUF")) {
+				gateToAdd = new Buf(delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("EXOR")) {
+				gateToAdd = new Exor(numInputs,delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("FF")) {
+				gateToAdd = new FF(delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("LATCH")) {
+				gateToAdd = new Latch(delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("NAND")) {
+				gateToAdd = new Nand(numInputs,delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("NOR")) {
+				gateToAdd = new Nor(numInputs,delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("NOT")) {
+				gateToAdd = new Not(delay);
+				gateList.put(result[1], gateToAdd);
+			}
+			if (gateType.equals("OR")) {
+				gateToAdd = new Or(numInputs,delay);
+				gateList.put(result[1], gateToAdd);
+			}
 		}
 		
 		else if (result[0].equals("#")) {
