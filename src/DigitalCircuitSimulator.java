@@ -10,7 +10,7 @@ public class DigitalCircuitSimulator {
 		Event.setEventQueue(queue);
 		gateList = new HashMap();
 		signalList = new HashMap();
-		System.out.print("Reading Circuitfile: " + circuitFile + " ... ");
+		System.out.println("Reading Circuitfile: " + circuitFile + " ... ");
 		readFile(circuitFile);
 		System.out.println("done.");
 
@@ -49,13 +49,14 @@ public class DigitalCircuitSimulator {
 	}
 
 	public void buildCircuit(String in) {
+		in = in.replaceAll("=", " = ");
+		in = in.replaceAll(" +", " ");
 		in = in.replaceAll(";", ""); // these methods
-		in = in.replaceAll(", ", ","); // remove all
-		in = in.replaceAll(" +", " "); // unwanted symbols
+		in = in.replaceAll(", ", ","); // remove all // unwanted symbols
 		in = in.replaceAll("\\.", " ");// from our String
 		String[] result = in.split(" "); // String gets split @ space
 
-		if (result.length > 1) {
+		if (result.length > 1) { //if not an empty line
 			if (result[0].equals("Signal")) { // when it finds Signal
 				String[] multIn = result[1].split(","); // handling multiple
 														// inputs
@@ -63,6 +64,7 @@ public class DigitalCircuitSimulator {
 				for (String s : multIn) {
 					Signal signalToAdd = new Signal(s);
 					signalList.put(s, signalToAdd);
+					System.out.println("Adding Signal: "+s);
 				}
 			}
 
@@ -74,64 +76,80 @@ public class DigitalCircuitSimulator {
 						signalList.put(s, signalToAdd);
 					}
 					signalList.get(s).setPrintValue();
+					System.out.println("Adding IOSignal: "+s);
 				}
 			}
 
 			else if (result[0].equals("Gate")) { // when it finds Gate
-				Gate gateToAdd;
+				Gate gateToAdd = null;
+				String gateName=result[1];
 				String gateType = result[2];
 				int delay = Integer.parseInt(result[4]);
-				int numInputs = gateType.charAt(gateType.length() - 1) - 48;
+				int numInputs = 1;
+				int conversion = gateType.charAt(gateType.length() - 1);
+				if (48<=conversion && conversion<=57) {
+					numInputs = conversion - 48;
+				}
+				
+				
 				gateType = gateType.replaceAll("[0-9]", "");
-				if (gateType.equals("AND")) {
-					gateToAdd = new And(numInputs, delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("BUF")) {
-					gateToAdd = new Buf(delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("EXOR")) {
-					gateToAdd = new Exor(numInputs, delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("FF")) {
-					gateToAdd = new FF(delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("LATCH")) {
-					gateToAdd = new Latch(delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("NAND")) {
-					gateToAdd = new Nand(numInputs, delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("NOR")) {
-					gateToAdd = new Nor(numInputs, delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("NOT")) {
-					gateToAdd = new Not(delay);
-					gateList.put(result[1], gateToAdd);
-				}
-				if (gateType.equals("OR")) {
-					gateToAdd = new Or(numInputs, delay);
-					gateList.put(result[1], gateToAdd);
-				}
+				if (gateType.equals("AND"))   {gateToAdd = new And(numInputs, delay);} else
+				if (gateType.equals("BUF"))   {gateToAdd = new Buf(delay);} else
+				if (gateType.equals("EXOR"))  {gateToAdd = new Exor(numInputs, delay);} else
+				if (gateType.equals("FF"))    {gateToAdd = new FF(delay);} else
+				if (gateType.equals("LATCH")) {gateToAdd = new Latch(delay);} else
+				if (gateType.equals("NAND"))  {gateToAdd = new Nand(numInputs, delay);} else
+				if (gateType.equals("NOR"))   {gateToAdd = new Nor(numInputs, delay);} else
+				if (gateType.equals("NOT"))   {gateToAdd = new Not(delay);} else
+				if (gateType.equals("OR"))    {gateToAdd = new Or(numInputs, delay);}
+				gateList.put(gateName, gateToAdd);
+				System.out.println("Adding Gate: "+gateName);
 			}
 
 			else if (result[0].equals("#")) {
 				// do nothing because it's a comment
 			}
-
-			else if (result[1].charAt(0)==('i')) {
-				String inputNum = result[1].replaceAll("[a-z]", "");
+			//TODO für latch l[0-9] d e q nq und flipflop ff[0-9] c d q nq
+			else if (result[2].equals("=")) {
+				String gateName=result[0]; //can be l4, ff15, b3, g1 etc.
+				String pinName=result[1]; //can be i9, o, e, d, c
+				//String gateType=gateName.replaceAll("\\d", ""); //l, ff, b, g
+				String signalName=result[3];
+				int inputNum = 0;
+				boolean isInput=false;
+				Signal s = signalList.get(signalName);
+				boolean outputIsInverted=false;
+				
+				if (pinName.equals("nq")) {outputIsInverted=true;isInput=false;} else
+				if (pinName.equals("q"))  {isInput=false;} else
+				if (pinName.equals("o"))  {isInput=false;} else
+				if (pinName.equals("e"))  {inputNum=0;isInput=true;} else
+				if (pinName.equals("c"))  {inputNum=0;isInput=true;} else
+				if (pinName.equals("d"))  {inputNum=1;isInput=true;} else {
+					String pinNum = pinName.replaceAll("[a-z]", "");
+					inputNum = Integer.parseInt(pinNum) - 1;
+					isInput=true;
+				}
+				if (isInput==true) {
+					gateList.get(gateName).setInput(inputNum, s);
+					System.out.println("Connecting "+gateName+"."+pinName+" with "+signalName );
+				} else {
+					if (!outputIsInverted) {
+						gateList.get(gateName).setOutput(s);
+						System.out.println("Connecting output of "+gateName+" with "+signalName );
+					} else {
+						gateList.get(gateName).setOutputNeg(s);
+						System.out.println("Connecting inversed output of "+gateName+" with "+signalName );
+					} 
+				}
+				/*String inputNum = result[1].replaceAll("[a-z]", "");
 				gateList.get(result[0]).setInput(Integer.parseInt(inputNum)-1,
-						signalList.get(result[3]));
-			} else if (result[1].equals("o")) {
+						signalList.get(result[3]));*/
+			} 
+			
+			/*else if (result[1].equals("o")) {
 				gateList.get(result[0]).setOutput(signalList.get(result[3]));
-			}
+			}*/
 		}
 
 	}
@@ -144,8 +162,8 @@ public class DigitalCircuitSimulator {
 	}
 
 	public static void main(String[] args) {
-		String circuitFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/beispiel1o2.cir";
-		String eventFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/beispiel1o.events";
+		String circuitFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/beispiel-latch.cir";
+		String eventFile = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/beispiel-latch.events";
 		DigitalCircuitSimulator t = new DigitalCircuitSimulator(circuitFile,eventFile);
 		t.simulate();
 	}

@@ -1,9 +1,10 @@
 
-public class Latch extends Gate {
-	boolean result;
+public class Latch extends Memory {
+
 	public Latch(int delay) {
-		super(2, delay);
+		super(delay);
 	}
+	
 	public boolean logic() {
 		 
 		boolean enable = inputSignals[0].getValue();

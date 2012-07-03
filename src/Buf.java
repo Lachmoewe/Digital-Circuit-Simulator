@@ -8,9 +8,7 @@ public class Buf extends Gate {
 	}
 	public boolean logic() {
 		boolean result = inputSignals[0].getValue();
-		/*for (Signal s : inputSignals) {
-			result = s.getValue();
-		}*/
+		
 		return result;
 	}
 	
