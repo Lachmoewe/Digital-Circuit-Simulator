@@ -7,8 +7,8 @@ public abstract class Gate {
 	// hier gespeichert.
 	protected Signal outputSignal;
 	protected int delay;
-	protected int timer =10;
-	protected boolean outputValue;
+	private int timer =10;
+	private boolean outputValue;
 
 	public Gate(int inputs, int delay) { // Konstruktor konstruiert ...
 		this.delay = delay;
@@ -72,9 +72,9 @@ public abstract class Gate {
 	public boolean logic() {
 		return true;
 	}
-
-
-	public void setOutputNeg(Signal s) {
+	
+	public int getAnzahlvoneingängen(){
+		return numInputs;
 	}
 }
 		
