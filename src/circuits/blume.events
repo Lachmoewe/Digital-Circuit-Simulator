@@ -1,0 +1,56 @@
+# Events zum BLUMENGIESSAUTOMAT
+# Diese Schaltung wertet mit digitalen Sensoren
+# die Bodenfeuchtigkeit und Temperatur aus. Es wird
+# ermittelt, wann gegossen werden muss.
+# Bei Wassermangel wird Alarm ausgelöst.
+
+#Zeit Signal       Wert
+
+0     warm         0
+0     trocken      0
+0     sehrtrocken  0
+0     wenigwasser  0
+0     keinwasser   0
+0     nichtreset   1
+50    warm         1
+100   trocken      1
+
+# Es muss gegossen werden
+
+250   trocken      0
+300   warm         0
+550   trocken      1
+600   sehrtrocken  1
+
+# Es muss gegossen werden
+
+700   sehrtrocken  0
+750   trocken      0
+800   wenigwasser  1
+
+# kein Alarm, weil nicht warm!
+
+880   nichtreset   0
+
+# Alarm kann nicht geloescht werden,
+# da er nicht aktiv ist.
+
+881   nichtreset   1
+900   keinwasser   1
+
+# Alarm, da kein Wasser!
+# giessen ist nun aus
+
+1020  nichtreset   0
+
+# Alarm kann nicht gloescht werden, weil
+# noch kein Wasser im Behaelter ist.
+
+1020  keinwasser   0
+
+# Jetzt wird der Alarm ausgeschalten
+
+1040  nichtreset   1
+1050  wenigwasser  0
+
+# Behaelter wieder ausreichend gefuellt

@@ -1,0 +1,96 @@
+# BLUMENGIESSAUTOMAT
+# Diese Schaltung wertet mit digitalen Sensoren
+# die Bodenfeuchtigkeit und Temperatur aus (Signale
+# warm, trocken und sehrtrocken). Es wird auch der
+# Wasserpegel in einem Vorratsbehälter bestimmt (Signale
+# wenigwasser und keinwasser). Daraus wird ermittelt,
+# wann gegossen werden muss. Bei Wassermangel wird
+# Alarm ausgelöst. Dieser kann nach dem Auffüllen des
+# Wassers mit nichtreset beendet werden.
+# Das Signal giessen soll nach dem die Signale trocken &
+# warm oder sehrtrocken wieder inaktiv sind noch eine
+# kurze Zeit eingeschaltet bleiben.
+
+# Eingaenge der Schaltung
+Input warm, trocken, sehrtrocken, wenigwasser, keinwasser, nichtreset;
+
+# Ausgaenge der Schaltung
+Output giessen, alarm;
+
+# Gatter der Schaltung
+Gate g1  BUF   Delay 60;
+Gate g2  BUF   Delay 60;
+Gate g3  BUF   Delay 60;
+Gate g4  BUF   Delay 60;
+Gate g5  BUF   Delay 60;
+Gate g6  NOT   Delay 45;
+Gate g7  OR2   Delay 6;
+Gate g8  AND2  Delay 5;
+Gate g9  OR2   Delay 6;
+gate g10 AND2  Delay 5;
+Gate g11 AND3  Delay 7;
+Gate g12 OR2   Delay 6;
+Gate g13 OR2   Delay 6;
+Gate g14 AND2  Delay 5;
+Gate g15 NAND2 Delay 4;
+
+# interne Verdrahtung der Schaltung
+Signal s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
+
+# Signalverzoegerung mit 5 Gattern
+g1.i1  = s2;
+g1.o   = s3;
+
+g2.i1  = s3;
+g2.o   = s4;
+
+g3.i1  = s4;
+g3.o   = s5;
+
+g4.i1  = s5;
+g4.o   = s6;
+
+g5.i1  = s6;
+g5.o   = s7;
+
+g6.i1  = s6;
+g6.o   = s8;
+
+# giessen mit verzoegertem abschalten
+g7.i1  = s2;
+g7.i2  = s9;
+g7.o   = giessen;
+
+g8.i1  = trocken;
+g8.i2  = warm;
+g8.o   = s1;
+
+g9.i1  = sehrtrocken;
+g9.i2  = s1;
+g9.o   = s2;
+
+g10.i1 = giessen;
+g10.i2 = s13;
+g10.o  = s9;
+
+g15.i1 = s7;
+g15.i2 = s8;
+g15.o  = s13;
+
+# Alarm bei Wassermangel
+g11.i1 = giessen;
+g11.i2 = wenigwasser;
+g11.i3 = warm;
+g11.o  = s10;
+
+g12.i1 = s10;
+g12.i2 = keinwasser;
+g12.o  = s11;
+
+g13.i1 = s11;
+g13.i2 = s12;
+g13.o  = alarm;
+
+g14.i1 = nichtreset;
+g14.i2 = alarm;
+g14.o  = s12;

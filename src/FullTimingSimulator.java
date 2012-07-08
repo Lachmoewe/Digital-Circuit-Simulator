@@ -1,456 +1,220 @@
-/**
- * Klasse FullTimingSimulator ist ein Logiksimulator, der alle geforderten Gattertypen
- * benutzt und Zeitverz���gerungen ber���cksichtigt.
- * Die zu simulierende Schaltung wird in der Methode
- * <CODE>buildCircuitX()</CODE> der Klasse erzeugt (mit X in 1,2,3).
- * Diese Methode verwendet weitere Hilfsmethoden um die Schaltung zu
- * erzeugen.  Versuchen Sie doch mal herauszubekommen, was die Schaltung3
- * macht und bis zu welcher Taktfrequenz sie zuverl���ssig arbeitet.
- * <BR>Nach der Konstruktion der Schaltung muss zun���chst der Ruhezustand
- * der Schaltung berechnet werden. Dies ���bernimmt die Methode
- * <CODE>findSteadyStateX()</CODE>. Die Eingabe-Events zur Stimulation
- * der Schaltung werden durch die Methode <CODE>setInputEventsX()</CODE>
- * erzeugt.
- * Zum Testen Ihrer Klassen <CODE>Nand</CODE>, <CODE>Nor</CODE>,
- * <CODE>Or</CODE>, <CODE>And</CODE>, <CODE>Exor</CODE>,
- * <CODE>Buf</CODE>, <CODE>Not</CODE>, <CODE>FF</CODE>, <CODE>Latch</CODE>,
- * <CODE>Signal</CODE>, <CODE>Event</CODE>,und <CODE>EventQueue</CODE>
- * m���ssen Sie einfach nur eine Instanz dieser Klasse erzeugen und dann
- * die Methode <CODE>simulate()</CODE> aufrufen.
- * @author Christian Hochberger, TU Dresden
- * @version 1.0 Erste Fassung
- */
+//import java.util.ArrayList;
+//import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Iterator;
+import java.util.Collection;
+
 public class FullTimingSimulator {
-    // EventQueue f���r diesen Simulator, wird im Konstruktor initialisiert
-    private EventQueue	queue;
-    // Die Eingangssignale aller m���glichen Schaltungen. Es werden nicht in
-    // jeder Schaltung alle Eing���nge verwendet.
-    private Signal writeEnable;
-    private Signal clk;
-    private Signal memIn[];
-    private Signal memOAddr[];
-    private Signal memIAddr[];
-    private Signal a[],reset;
+	private EventQueue queue;
+	private LinkedHashMap<String, Gate> gateList;
+	private static LinkedHashMap<String, Signal> signalList;
+	private static Collection<Signal> c;
+	private static Collection<Signal> c_alt;
+	
 
-    // Die Ausgangssignale der dritten Schaltung
-    private Signal memOut[];
-
-    // Z���hler f���r die aufgebauten Multiplexer und Z���hler, um die Namen der internen
-    // Signale besser generieren zu k���nnen.
-    private int muxCnt;
-    private int cntCnt;
-
-    /**
-     * Konstruktor, der die zu simulierende Schaltung aufbaut, den Ruhezustand
-     * ermittelt und die Eingabe-Events erzeugt.
-     * Simuliert wird je nach Argument eine der drei vorgegebenen Schaltungen
-     *  1 = Einfacher Multiplexer 4 zu 1 
-     *  2 = Einfacher synchroner, r���cksetzbarer Z���hler mit 4 Bit
-     *  3 = Komplexe Schaltung mit einem Z���hler vielen Latches und
-     *      einigen Multiplexern
-     */
-    public FullTimingSimulator(int version) {
-	// Erzeugt die EventQueue f���r diesen Simulator
-	queue=new EventQueue();
-
-	// Tr���gt diese EventQueue in ein statisches Feld der Klasse Event ein
-	// Dazu muss Event die statische Methode setEventQueue(EventQueue e)
-	// besitzen.
-	Event.setEventQueue(queue);
-
-	if (version==1) {
-	    // Schaltung aufbauen
-	    buildCircuit1();
-	    // Ruhezustand berechnen
-	    findSteadyState1();
-	    // EventQueue mit Eingabe-Events f���llen
-	    setInputEvents1();
-	} else if (version==2) {
-	    // Schaltung aufbauen
-	    buildCircuit2();
-	    // Ruhezustand berechnen
-	    findSteadyState2();
-	    // EventQueue mit Eingabe-Events f���llen
-	    setInputEvents2();
-	} else if (version==3) {
-	    // Schaltung aufbauen
-	    buildCircuit3();
-	    // Ruhezustand berechnen
-	    findSteadyState3();
-	    // EventQueue mit Eingabe-Events f���llen
-	    setInputEvents3();
+	public FullTimingSimulator(String circuitfile, String eventfile) {
+		signalList = new LinkedHashMap<String, Signal>();
+		queue = new EventQueue();
+		gateList = new LinkedHashMap<String, Gate>();
+		
+		Event.setEventQueue(queue);
+		readFile(circuitfile);
+		readFile(eventfile);
+		
+		
 	}
-    }
 
-    /**
-     * Diese Methode konstruiert einen Multiplexer aus den gegebenen
-     * Eingangssignalen, den Steursignalen (und ihrer Negation) und legt den
-     * Ausgang an das angegebene Signal. Die gegebene Methode funktioniert
-     * maximal bis zu vier Eing���ngen.
-     */
-    private void buildMux(Signal[] inputs, Signal[] select, Signal[] nselect, Signal out) {
-	muxCnt++;
-	String prefix="Mux"+muxCnt;
-	int numSBits=0,i;
-	int numInputs=inputs.length;
+	public void readFile(String filename) {
 
-	if (inputs.length>4) {
-	    throw new RuntimeException("Too many mux inputs");
+		String ending[] = filename.split("\\.");
+		DateiLeser file = new DateiLeser(filename);
+
+		if (ending[1].contains("cir")) {
+			while (file.nochMehrZeilen()) {
+				buildCircuit(file.gibZeile());
+			}
+		}
+
+		else if (ending[1].contains("event")) {
+			while (file.nochMehrZeilen()) {
+				setupQueue(file.gibZeile());
+			}
+		}
 	}
-	i=inputs.length>>1;
-	while (i>0) {
-	    numSBits++;
-	    i>>=1;
+
+	public void setupQueue(String in) {
+		if (in.contains("#")) {
+		}
+
+		else {
+			in = in.replaceAll(" +", " ");
+			String[] result = in.split(" ");
+			if (result.length != 1) {
+				int time = Integer.parseInt(result[0]); //
+
+				String signalname = result[1];
+				boolean value;
+				if (result[2].equals("1")) {
+					value = true;
+				} // "1" und "0" in booleans umwandeln
+				else {
+					value = false;
+				}
+
+				queue.addEvent(new Event(signalList.get(signalname), time,
+						value));
+			}
+		}
+	}
+
+	public void buildCircuit(String in) {
+		if (in.equals("\\s*")) {return;};//damit werden leere Zeilen übersprungen
+		
+
+		in = in.replaceAll(";", ""); // these methods
+		in = in.replaceAll(" ,", ","); // remove all
+		// unwanted symbols
+		in = in.replaceAll(",\\s+", ",");
+		in = in.replaceAll("=", " = ");
+		in = in.replaceAll("\\.", " ");
+		in = in.replaceAll("\\s+", " ");// from our String
+		String[] result = in.split("\\s"); // String gets split @ space
+
+		if (result[0].equals("Signal") || result[0].equals("Input")
+				|| result[0].equals("Output")) {// when it finds Signal
+			String[] multIn = result[1].split(","); // handling multiple inputs
+													// per line
+			for (String s : multIn) {
+				Signal signalToAdd = new Signal(s);
+				signalList.put(s, signalToAdd);
+				System.out.println(signalList.toString());
+			}
+		}
+
+		else if (result[0].equals("Gate") || result[0].equals("gate")) { // when
+																			// it
+																			// finds
+																			// Gate
+			Gate gateToAdd;
+			String gateType = result[2];
+
+			int delay = Integer.parseInt(result[4]);
+
+			int numInputs = gateType.charAt(gateType.length() - 1) - 48;
+			gateType = gateType.replaceAll("[0-9]", "");// /////////////////////////////////////////////
+			System.out.println("Inhalt von gateList: " + gateList.size());
+
+			if (gateType.equals("AND")) {gateToAdd = new And(numInputs, delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+	
+			if (gateType.equals("BUF")) {gateToAdd = new Buf(delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("EXOR")) {gateToAdd = new Exor(numInputs, delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("FF")) {gateToAdd = new FF(delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("LATCH")) {gateToAdd = new Latch(delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("NAND")) {gateToAdd = new Nand(numInputs, delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("NOR")) {
+				gateToAdd = new Nor(numInputs, delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("NOT")) {gateToAdd = new Not(delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+			if (gateType.equals("OR")) {gateToAdd = new Or(numInputs, delay);gateList.put(result[1], gateToAdd);
+				System.out.println(result[1] + " wurde erstellt");
+			}
+		}
+
+		else if (result[0].equals("#") || result.length == 1) {
+			// do nothing because it's a comment
+		}
+
+		else {
+			if (result[1].contains("i")) {
+				String inputNum = result[1].replaceAll("[a-z]", "");
+				int inputnum = Integer.parseInt(inputNum);
+				inputnum = inputnum - 1; //-1 korrektur, da die Gattereingänge von 0 aus gezählt werden
+				
+				System.out.println("Gewähltes Signal ist: " + result[3]);
+				System.out.println("Gewähltes Gatter ist: "+ gateList.get(result[0]));		
+				System.out.println("Mögliche Anzahl von eingängen: "+ gateList.get(result[0]).getAnzahlvoneingängen());	
+				System.out.println("Ausgewählter Eingang: " + inputnum);
+				
+				gateList.get(result[0]).setInput(inputnum,signalList.get(result[3]));
+						
+						
+				System.out.println("gatter: " + result[0]
+						+ " wurde an Eingang " + inputnum + " verbunden mit: "
+						+ result[3]);	
+			}	
+			
+			 else if (result[1].equals("d")) {
+				gateList.get(result[0]).setInput(0,signalList.get(result[3])); // d immer mit eingang 0 verbinden										
+			}
+
+			else if (result[1].equals("e")) {
+				gateList.get(result[0]).setInput(1,signalList.get(result[3])); // e immer mit eingang 1 verbinden
+			}
+			
+			 else if (result[1].equals("q")) {
+				gateList.get(result[0]).setOutput(signalList.get(result[3]));
+			} 
+			
+			else if (result[1].equals("o")) {
+				gateList.get(result[0]).setOutput(signalList.get(result[3]));
+			}
+			
+			else if (result[1].equals("nq")) {
+				gateList.get(result[0]).setOutputNeg(signalList.get(result[3]));
+			}
+
+		}
+
+	}
+
+	public void simulate() {
+		while (queue.hasMore()) {
+			Event e = queue.getFirst();
+			e.propagate();
+		}
 	}
 	
-	Nand[] fstage=new Nand[numInputs];
-	Nand   ostage=new Nand(numInputs,5);
-	Signal[] maskedInp=new Signal[numInputs];
-	for (i=0; i<numInputs; i++) {
-	    maskedInp[i]=new Signal(prefix+"min"+i);
-	    fstage[i]=new Nand(numSBits+1,5);
-	    for (int j=0; j<numSBits; j++) {
-		if ( (i&(1<<j)) != 0 ) {
-		    fstage[i].setInput(j,select[j]);
-		} else {
-		    fstage[i].setInput(j,nselect[j]);
-		}
-	    }
-	    fstage[i].setInput(numSBits,inputs[i]);
-	    fstage[i].setOutput(maskedInp[i]);
-	    ostage.setInput(i,maskedInp[i]);
-	}
-	ostage.setOutput(out);
-    }
+	public static void ganzeSignallisteAusgeben(){
+		//if(c==c_alt)
+		{System.out.println(c);}
+		//c_alt.addAll(c);
+	} 
 
-    /**
-     * Diese Methode konstruiert einen synchronen, r���cksetzbaren Z���hler.
-     * ���bergeben werden ein Taktsignal, ein Reset-Signal und ein Array mit
-     * Augangssignalen. ���ber die Gr������e dieses Arrays wird automatisch auch
-     * die Breite des Z���hlers bestimmt.
-     */
-    private void buildSynCounter(Signal clk, Signal reset, Signal[] outputs) {
-	cntCnt++;
-	String prefix="Cnt"+cntCnt;
-	int numBits=outputs.length;
-
-	FF[] reg = new FF[numBits];
-	Signal notRes=new Signal(prefix+"nReset");
-	Not negCtrl=new Not(2);
-	negCtrl.setInput(0,reset);
-	negCtrl.setOutput(notRes);
-	for (int i=0; i<numBits; i++) {
-	    reg[i]=new FF(20);
-	    reg[i].setInput(0,clk);
-	    Signal regInput=new Signal(prefix+"regI"+i);
-	    Signal newBit=new Signal(prefix+"muxI"+i);
-	    if (i==0) {
-		Not feedback=new Not(2);
-		feedback.setInput(0,outputs[0]);
-		feedback.setOutput(newBit);
-	    } else if (i==1) {
-		Exor feedback=new Exor(2,5);
-		feedback.setInput(0,outputs[1]);
-		feedback.setInput(1,outputs[0]);
-		feedback.setOutput(newBit);
-	    } else {
-		Exor feedback=new Exor(2,5);
-		And condition=new And(i,5);
-		Signal conditionVal=new Signal(prefix+"CondVal"+i);
-		for (int j=0; j<i; j++) {
-		    condition.setInput(j,outputs[j]);
-		}
-		condition.setOutput(conditionVal);
-		feedback.setInput(0,conditionVal);
-		feedback.setInput(1,outputs[i]);
-		feedback.setOutput(newBit);
-	    }
+	public static void main(String[] args) {
+		String homedir = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/";
+		String circuitfile = homedir+"beispiel-latch.cir";
+		String eventfile = homedir+"beispiel-latch.events";
+		FullTimingSimulator t = new FullTimingSimulator(circuitfile, eventfile);
+	
+		c = signalList.values();//Alle signale in die collection schreiben
+		String format=""+signalList.keySet();
+		format= format.replaceAll(", ", "\t");
+		System.out.println("	"+format);
 		
-	    And maskNewBit = new And(2,5);
-	    Signal maskedBitVal=new Signal(prefix+"maskedBitVal"+i);
-	    maskNewBit.setInput(0,notRes);
-	    maskNewBit.setInput(1,newBit);
-	    maskNewBit.setOutput(maskedBitVal);
-	    reg[i].setInput(1,maskedBitVal);
-	    reg[i].setOutput(outputs[i]);
-	}
-    }
-
-    
-    /**
-     * Diese Methode konstruiert die Schaltung. Die erzeugten Gatter und die
-     * inneren Signale sind nur in dieser Methode bekannt, da sie im Verlauf
-     * der Simulation implizit durch die Events, bzw. die Signale angesprochen
-     * werden.Simuliert wird ein einfacher Multiplexer der einen aus vier
-     * Eing���ngen ausw���hlt.
-     */
-    private void buildCircuit1() {
-	memIn=new Signal[4];
-	memIAddr=new Signal[2];
-	Signal[] nmemIAddr=new Signal[2];
-	for (int i=0; i<4; i++) {
-	    memIn[i]=new Signal("memIn"+i);
-	}
-	for (int i=0; i<2; i++) {
-	    memIAddr[i]=new Signal("memIAddr"+i);
-	    nmemIAddr[i]=new Signal("nmemIAddr"+i);
-	    Not negate=new Not(2);
-	    negate.setInput(0,memIAddr[i]);
-	    negate.setOutput(nmemIAddr[i]);
-	}
-	Signal out=new Signal("Out");
-	buildMux(memIn,memIAddr,nmemIAddr,out);
-    }
-
-    /**
-     * Diese Methode konstruiert eine weitere Schaltung.  Simuliert wird
-     * ein einfacher vier Bit synchroner Z���hler.
-     */
-    private void buildCircuit2() {
-	reset=new Signal("Reset");
-	clk=new Signal("Clk");
-	a=new Signal[4];
-	Signal[] out=new Signal[4];
-	Buf[] buf = new Buf[4];
-	for (int i=0; i<4; i++) {
-	    a[i]=new Signal("CntOut"+i);
-	    out[i]=new Signal("Out"+i);
-	    buf[i]=new Buf(3);
-	    buf[i].setInput(0,a[i]);
-	    buf[i].setOutput(out[i]);
-	}
-	buildSynCounter(clk,reset,a);
-    }
-
-    /**
-     * Diese Methode konstruiert die dritte m���gliche Schaltung.  Diese ist
-     * sehr kompliziert (enth���lt ca. 150 Gatter). Die genaue Funktion
-     * k���nnen Sie ja mal versuchen herauszubekommen.
-     */
-    private void buildCircuit3() {
-	writeEnable=new Signal("WriteEnable");
-	clk=new Signal("Clk");
-	memOut = new Signal[4];
-	memIn = new Signal[4];
-	memOAddr = new Signal[3];
-	memIAddr = new Signal[3];
-
-	// Werden intern f���r den Aufbau der Multiplexer gebraucht
-	Signal nmemOAddr[] = new Signal[3];
-	Signal nmemIAddr[] = new Signal[3];
-
-	Signal memSelect[][] = new Signal[2][4];
-	for (int i=0; i<4; i++) {
-	    memSelect[0][i]=new Signal("memSelect0_"+i);
-	    memSelect[1][i]=new Signal("memSelect1_"+i);
-	    memOut[i]=new Signal("memOut"+i);
-	    memIn[i]=new Signal("memIn"+i);
-	}
-	for (int i=0; i<3; i++) {
-	    memOAddr[i]=new Signal("memOAddr"+i);
-	    nmemOAddr[i]=new Signal("nmemOAddr"+i);
-	    Not naddr=new Not(2);
-	    naddr.setInput(0,memOAddr[i]);
-	    naddr.setOutput(nmemOAddr[i]);
-	    memIAddr[i]=new Signal("memIAddr"+i);
-	    nmemIAddr[i]=new Signal("nmemIAddr"+i);
-	    naddr=new Not(2);
-	    naddr.setInput(0,memIAddr[i]);
-	    naddr.setOutput(nmemIAddr[i]);
-	}
-	// Hier erfolgt die Instanziierung der eigentlichen Speichermatrix
-	// Diese wird auch gleich mit den passenden Eingangssignalen 
-	// und Gattern verbunden.
-	Latch[][] mem=new Latch[8][4];
-	for (int i=0; i<8; i++) {
-	    for (int j=0;j<4; j++) {
-		Latch l=new Latch(10);
-		mem[i][j]=l;
-		And enable=new And(4,5);
-		Signal localEnable=new Signal("memLE"+i+"_"+j);
-		for (int k=0; k<3; k++) {
-		    if ( (i&(1<<k)) != 0 ) {
-			enable.setInput(k,memIAddr[k]);
-		    } else {
-			enable.setInput(k,nmemIAddr[k]);
-		    }
-		}
-		enable.setInput(3,writeEnable);
-		enable.setOutput(localEnable);
-		l.setInput(0,localEnable);
-		l.setInput(1,memIn[j]);
-	    }
-	}
-	// Hier wird nun der Ausgangsteil der Speichermatrix aufgebaut
-	// Dazu werden zun���chst die beiden H���lften des Speichers getrennt
-	// gemultiplext, danach werden diese beiden Signale dann zusammen-
-	// gefasst.
-	Signal[] memDint=new Signal[4];
-	for (int i=0; i<4; i++) {
-	    for (int j=0; j<4; j++) {
-		memDint[j] = new Signal("memDint"+j+"_"+i);
-		mem[j][i].setOutput(memDint[j]);
-	    }
-	    buildMux(memDint, memOAddr, nmemOAddr, memSelect[0][i]);
-	}
-	for (int i=0; i<4; i++) {
-	    for (int j=0; j<4; j++) {
-		memDint[j] = new Signal("memDint"+(j+4)+"_"+i);
-		mem[j+4][i].setOutput(memDint[j]);
-	    }
-	    buildMux(memDint, memOAddr, nmemOAddr, memSelect[1][i]);
-	}
-	Signal[] upperAddr=new Signal[1];
-	upperAddr[0]=memOAddr[2];
-	Signal[] nupperAddr=new Signal[1];
-	nupperAddr[0]=nmemOAddr[2];
-	Signal[] h=new Signal[2];
-	for (int i=0; i<4; i++) {
-	    h[0]=memSelect[0][i];
-	    h[1]=memSelect[1][i];
-	    buildMux(h, upperAddr, nupperAddr, memOut[i]);
+		t.simulate();
+		
 	}
 
-	// Hier wird nun die Adressgenerierung f���r den Speicher aufgebaut.
-	// Im wesentlichen handelt es sich hier um einen synchronen,
-	// r���cksetzbaren Z���hler, der immer dann zur���ckgesetzt wird, wenn
-	// das oberste Bit des Speicherinhalts eine 1 liefert.
-	buildSynCounter(clk, memOut[3], memOAddr);
-
-	// Z���hlerausg���nge auch auf Signale f���hren, damit man die Adressierung
-	// nachvollziehen kann.
-	Buf[] obuf=new Buf[3];
-	for (int i=0; i<3; i++) {
-	    obuf[i]=new Buf(1);
-	    Signal out_n=new Signal("CntAddr"+i);
-	    obuf[i].setInput(0,memOAddr[i]);
-	    obuf[i].setOutput(out_n);
+	public static void updateSignalList(String name,Signal signal) {
+		
+		signalList.put(name,signal);
+		//System.out.println(signalList.toString());
+		
 	}
-    }
-    
-    /**
-     * Diese Methode ermittelt den Ruhezustand der Schaltung. Dazu werden
-     * vern���nftige Initialwerte an die Eing���nge angelegt. Diese Initialwerte
-     * m���ssen mindestens einmal durch die Schaltung propagiert werden,
-     * bis sich ein stabiler Zustand einstellt. Um das festzustellen gibt
-     * es verschiedene Methoden (im Gatter mitz���hlen, wie oft sich der Wert
-     * ���ndert. Im Signal mitz���hlen, wie oft es ge���ndert wurde).
-     * Bei diesem Propagieren darf nat���rlich nicht mit den Zeitverz���gerungen
-     * gearbeitet werden.  Sie k���nnen also im Grunde die Wert-Propagierung
-     * aus der ersten Teilaufgabe benutzen.
-     */
-    private void findSteadyState1() {
-	for (int i=0; i<4; i++) {
-	    memIn[i].setValue(false);
-	}
-	for (int i=0; i<2; i++) {
-	    memIAddr[i].setValue(false);
-	}
-    }
-
-    /**
-     * Genau wie die vorhergehende Methode nur f���r die Schaltung zwei
-     */
-    private void findSteadyState2() {
-	clk.setValue(false);
-	reset.setValue(false);
-    }
-
-    /**
-     * Genau wie die vorhergehende Methode nur f���r die Schaltung drei
-     */
-    private void findSteadyState3() {
-	for (int i=0; i<4; i++) {
-	    memIn[i].setValue(false);
-	}
-	for (int i=0; i<3; i++) {
-	    memIAddr[i].setValue(false);
-	}
-	writeEnable.setValue(false);
-	clk.setValue(false);
-    }
-
-    /**
-     * Diese Methode erzeugt eine Reihe von Eingabe-Events, die dann zur
-     * Stimulation der Schaltung dienen.  Die Events werden durch ihren
-     * eigenen Konstruktor in die EventQueue eingetragen, so dass hier nur
-     * das Erzeugen der Events zu sehen ist.
-     * Jedes Event bekommt beim Erzeugen das betroffene Signal, den Zeitpunkt
-     * und den <bold>neuen Wert</bold> mit.
-     */
-    private void setInputEvents1() {
-	new Event(memIn[0],50,true);
-	new Event(memIn[2],100,true);
-	new Event(memIAddr[0],150,true);
-	new Event(memIAddr[1],200,true);
-	new Event(memIn[3],250,true);
-	new Event(memIAddr[0],300,false);
-	new Event(memIn[2],350,false);
-    }
-
-    /**
-     * Ebenfalls die Erzeugung der Stimuli f���r die zweite eingebaute Schaltung
-     *
-     */
-    private void setInputEvents2() {
-	for (int i=0; i<20; i++) {
-	    new Event(clk, 50+i*100, true);
-	    new Event(clk, (i+1)*100, false);
-	}
-	new Event(reset,1020,true);
-	new Event(reset,1030,false);
-
-	new Event(reset,1830,true);
-	new Event(reset,1860,false);
-    }
-
-    /**
-     * Ebenfalls die Erzeugung der Stimuli f���r die dritte eingebaute Schaltung
-     *
-     */
-    private void setInputEvents3() {
-	for (int i=0; i<8; i++) {
-	    for (int j=0; j<3; j++) {
-		new Event(memIn[j],i*100,((7-i)&(1<<j))!=0);
-		new Event(memIAddr[j],i*100,(i&(1<<j))!=0);
-	    }
-	    new Event(memIn[3],i*100,(i==5));
-	    new Event(writeEnable,i*100+20,true);
-	    new Event(writeEnable,i*100+50,false);
-	}
-
-	for (int i=0; i<7; i++) {
-	    new Event(clk,50+i*100+1000,true);
-	    new Event(clk,(i+1)*100+1000,false);
-	}
-    }
-    /**
-     * Diese Methode f���hrt die eigentliche Simulation durch. Dazu wird
-     * gepr���ft, ob in der EventQueue noch weitere Events vorhanden sind. Ist
-     * dies der Fall, dann wird das n���chste anstehende Event behandelt. Dazu
-     * muss das Event die Methode propagate() zur Verf���gung stellen, die
-     * dann das betroffene Signal informiert.
-     */
-    public void simulate() {
-	while (queue.hasMore()) {
-	    Event e=queue.getFirst();
-
-	    e.propagate();
-	}
-    }
-    
-    /**
-     * Main Methode dieser Klasse. Sie m���ssen das im Moment noch nicht
-     * verstehen. Diese Methode wird ben���tigt, wenn Sie den Simulator ohne
-     * BlueJ laufen lassen wollen. Wenn Sie diese Klasse in BlueJ nutzen,
-     * dann ignorieren Sie diese Methode einfach.
-     * 
-     * Wenn Sie die verschiedenen Schaltungen testen wollen, dann m���ssen
-     * Sie den Parameter des Konstruktors entsprechend ���ndern. Das k���nnen
-     * Sie nat���rlich auch durch Auswertung der Kommandozeilenparameter tuen.
-     */
-    static public void main(String[] args) {
-	FullTimingSimulator	t=new FullTimingSimulator(3);
-	t.simulate();
-    }
 }

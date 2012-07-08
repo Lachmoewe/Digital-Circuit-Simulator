@@ -10,6 +10,7 @@ public class Memory extends Gate {
 	public void setOutputNeg(Signal s) {
 		// Defensiver Kram
 		outputSignalNeg = s;
+		System.out.println("IM NEGATIVE, BITCH!");
 
 	}
 	
