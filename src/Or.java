@@ -7,7 +7,7 @@ public class Or extends Gate {
 	}
 
 	public boolean logic() {
-		boolean result = true;
+		boolean result = false;
 		for (Signal s : inputSignals) {
 			result = result || s.getValue();
 		}

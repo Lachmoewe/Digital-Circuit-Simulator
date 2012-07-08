@@ -177,6 +177,10 @@ public class FullTimingSimulator {
 			
 			else if (result[1].equals("nq")) {
 				gateList.get(result[0]).setOutputNeg(signalList.get(result[3]));
+				System.out.println("Gewähltes Signal ist: " + result[3]);
+				System.out.println("Gewähltes Gatter ist: "+ gateList.get(result[0]));		
+				System.out.println("Verbinde mit nq.");
+				
 			}
 
 		}
@@ -198,8 +202,8 @@ public class FullTimingSimulator {
 
 	public static void main(String[] args) {
 		String homedir = "/home/timo/workspace/Digital-Circuit-Simulator/src/circuits/";
-		String circuitfile = homedir+"beispiel-latch.cir";
-		String eventfile = homedir+"beispiel-latch.events";
+		String circuitfile = homedir+"beispiel-flipflop.cir";
+		String eventfile = homedir+"beispiel-flipflop.events";
 		FullTimingSimulator t = new FullTimingSimulator(circuitfile, eventfile);
 	
 		c = signalList.values();//Alle signale in die collection schreiben
