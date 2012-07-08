@@ -8,7 +8,6 @@ public class Signal {
 	private boolean value;
 	private ArrayList<Gate> listenGates; // = new ArrayList();;
 	private int previousTime;
-	private boolean printValue=false;
 
 	public Signal(String signalName) {
 		this.signalName = signalName;
@@ -39,16 +38,30 @@ public class Signal {
 	}
 	
 	public void setValue(boolean v, int t) {
-		boolean oldValue=value;
+		//boolean oldValue=value;
 		value = v;
-		if (!listenGates.isEmpty()) {			
+		if (listenGates.isEmpty()) {
+			//if (oldValue!=value) {
+				//System.out.println(t + ": " + signalName + " = " + value);
+			System.out.print(t + ": ");
+			FullTimingSimulator.updateSignalList(signalName,this);
+			FullTimingSimulator.ganzeSignallisteAusgeben();
+			//}
+			
+			
+		}
+
+		else {System.out.print(t + ": " /*+ signalName + " = " + value*/);
+				/*signal in der hashmap speichern 
+				über die hashmap interieren und alle signale abfragen
+				ausgeben
+				*/
+				FullTimingSimulator.updateSignalList(signalName,this);
+				FullTimingSimulator.ganzeSignallisteAusgeben();
 				Iterator<Gate> it = listenGates.iterator();
 				while (it.hasNext()) {
 					it.next().calculate(t);
 			}
-		}
-		if (oldValue!=value&&printValue) {
-			System.out.println(t + ": " + signalName + " = " + value);
 		}
 		previousTime=t;
 	}
@@ -61,11 +74,14 @@ public class Signal {
 	public int getPreviousTime() {
 		return previousTime;
 	}
-
-	public void setPrintValue() {
-		printValue=true;
-		
+	
+	public String toString() {
+		int wert;
+		if(this.getValue()==true){wert = 1;}
+		else{wert = 0;};
+		String output = "";
+		output = "	"+wert;
+		return output;
 	}
-
 	
 }
