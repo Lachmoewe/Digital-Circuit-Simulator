@@ -43,21 +43,21 @@ public class Signal {
 		if (listenGates.isEmpty()) {
 			//if (oldValue!=value) {
 				//System.out.println(t + ": " + signalName + " = " + value);
-			System.out.print(t + ": ");
+			//System.out.print(t + ": ");
 			FullTimingSimulator.updateSignalList(signalName,this);
-			FullTimingSimulator.ganzeSignallisteAusgeben();
+			FullTimingSimulator.ganzeSignallisteAusgeben(t);
 			//}
 			
 			
 		}
 
-		else {System.out.print(t + ": " /*+ signalName + " = " + value*/);
+		else {/*System.out.print(t + ": " + signalName + " = " + value);*/
 				/*signal in der hashmap speichern 
 				über die hashmap interieren und alle signale abfragen
 				ausgeben
 				*/
 				FullTimingSimulator.updateSignalList(signalName,this);
-				FullTimingSimulator.ganzeSignallisteAusgeben();
+				FullTimingSimulator.ganzeSignallisteAusgeben(t);
 				Iterator<Gate> it = listenGates.iterator();
 				while (it.hasNext()) {
 					it.next().calculate(t);

@@ -6,15 +6,16 @@ public abstract class Gate {
 	protected Signal[] inputSignals; // Instanzen der Klasse Signale werden
 	// hier gespeichert.
 	protected Signal outputSignal;
+	protected Signal negOutputSignal;
 	protected int delay;
-	protected int timer =10;
-	protected boolean outputValue;
+	private int timer =10;
+	private boolean outputValue;
 
 	public Gate(int inputs, int delay) { // Konstruktor konstruiert ...
 		this.delay = delay;
 		this.numInputs = inputs; // Datenfeld Eing���nge wird mit dem Wert der
 		// Lokalen Variable Eing���nge gef���llt.
-		inputSignals = new Signal[inputs]; // Ein Array mit der Gr������e
+		inputSignals = new Signal[inputs]; // Ein Array mit der Größe
 		// *Eing���nge* wird hergestellt
 		// in dem die versch.
 		// Signalinstanzen gespeichert
@@ -40,10 +41,16 @@ public abstract class Gate {
 		}
 	}
 	public void setOutput(Signal s) {
-		// Defensiver Kram
+		
 		outputSignal = s;
 
 	}
+public void setNegOutput(Signal s) {
+		
+		negOutputSignal = s;
+
+	}
+	
 	public void connect(Signal s)// die methode speichern aus der Klasse
 	// Signal aufrufen und dadurch das
 	// Gatter in die ArrayList eintragen
@@ -55,11 +62,20 @@ public abstract class Gate {
 		if (outputValue!=result) {
 			outputValue = result;
 			outputSignal.setValue(result);
+			if (negOutputSignal!=null)
+			{
+			negOutputSignal.setValue(!result);
+			}
+			
 		}
 		else if (timer > 0){
 			timer--;
 			outputValue = result;
 			outputSignal.setValue(result);
+			if (negOutputSignal!=null)
+			{
+			negOutputSignal.setValue(!result);
+			}
 		}
 	}
 	public void calculate(int t) {
@@ -67,6 +83,11 @@ public abstract class Gate {
 		if (outputValue!=result) {
 		    outputValue = result;
 			new Event(outputSignal, t += delay, result);
+			if (negOutputSignal!=null)
+			{
+				new Event(negOutputSignal, t += delay, !result);
+			}
+			
 		}
 	}
 	public boolean logic() {
@@ -75,12 +96,6 @@ public abstract class Gate {
 	
 	public int getAnzahlvoneingängen(){
 		return numInputs;
-	}
-
-
-	public void setOutputNeg(Signal signal) {
-		// TODO Auto-generated method stub
-		
 	}
 }
 		
